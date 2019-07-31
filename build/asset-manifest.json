@@ -1,9 +1,0 @@
-{
-  "files": {
-    "main.js": "/hetio/frontend-components/static/js/main.js",
-    "main.js.map": "/hetio/frontend-components/static/js/main.js.map",
-    "index.html": "/hetio/frontend-components/index.html",
-    "precache-manifest.e78020e91b2eed604c615bbc0b0c856d.js": "/hetio/frontend-components/precache-manifest.e78020e91b2eed604c615bbc0b0c856d.js",
-    "service-worker.js": "/hetio/frontend-components/service-worker.js"
-  }
-}

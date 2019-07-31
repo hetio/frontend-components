@@ -2,7 +2,8 @@
   "name": "hetio-frontend-components",
   "version": "0.0.1",
   "description": "Frontend components shared across https://het.io",
-  "main": "./build/static/js/main.js",
+  "main": "build/index.js",
+  "module": "build/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hetio/frontend-components.git"
@@ -19,12 +20,18 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "node ./scripts/build-non-split.js",
+    "build": "rm -rf build && mkdir build && npx babel src --out-dir build --copy-files",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
   },
   "browserslist": {
     "production": [
@@ -39,6 +46,9 @@
     ]
   },
   "devDependencies": {
-    "rewire": "^4.0.1"
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0"
   }
 }
