@@ -2,20 +2,43 @@
   "name": "hetio-frontend-components",
   "version": "0.0.1",
   "description": "Frontend components shared across https://het.io",
-  "main": "index.js",
+  "main": "./build/static/js/main.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hetio/frontend-components.git"
   },
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/hetio/frontend-components/issues"
-  },
-  "homepage": "https://github.com/hetio/frontend-components#readme",
+  "homepage": "https://github.com/hetio/frontend-components",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.20",
     "@fortawesome/free-solid-svg-icons": "^5.10.0",
     "@fortawesome/react-fontawesome": "^0.1.4",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "node ./scripts/build-non-split.js",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "rewire": "^4.0.1"
   }
 }
