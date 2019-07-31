@@ -1,0 +1,21 @@
+{
+  "name": "hetio-frontend-components",
+  "version": "0.0.1",
+  "description": "Frontend components shared across https://het.io",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hetio/frontend-components.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hetio/frontend-components/issues"
+  },
+  "homepage": "https://github.com/hetio/frontend-components#readme",
+  "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^5.10.0",
+    "@fortawesome/react-fontawesome": "^0.1.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
+}
