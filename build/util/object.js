@@ -1,12 +1,1 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.copyObject = copyObject;
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function copyObject(object) {
-  if (_typeof(object) === 'object') return JSON.parse(JSON.stringify(object));else return object;
-}
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.copyObject=copyObject;function _typeof(a){return _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(a){return typeof a}:function(a){return a&&"function"==typeof Symbol&&a.constructor===Symbol&&a!==Symbol.prototype?"symbol":typeof a},_typeof(a)}function copyObject(a){return"object"===_typeof(a)?JSON.parse(JSON.stringify(a)):a}

@@ -8,11 +8,11 @@ import { Button } from './components/buttons.js';
 export class TestBed extends Component {
   render() {
     return (
-      <React.Fragment>
+      <>
         <Table />
         <DynamicField />
         <Button />
-      </React.Fragment>
+      </>
     );
   }
 }
