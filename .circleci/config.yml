@@ -28,14 +28,17 @@ jobs:
       - run:
           name: Install and configure dependencies
           command: |
-            npm install --global gh-pages
+            npm install --global --silent gh-pages@2.0.1
       - add_ssh_keys:
           fingerprints:
             - "63:a6:74:80:69:f1:6d:86:c0:97:24:bb:99:1c:7f:fb"
       - run:
           name: Deploy build to build branch
           command: |
+            set -o xtrace
             echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+            pwd
+            ls build
             gh-pages --dist build \
               --branch build \
               --user "CircleCI Deploy Job <ci-build@circleci.com>" \
