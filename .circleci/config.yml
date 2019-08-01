@@ -28,7 +28,7 @@ jobs:
       - run:
           name: Install and configure dependencies
           command: |
-            npm install
+            npm install --global gh-pages
       - add_ssh_keys:
           fingerprints:
             - "63:a6:74:80:69:f1:6d:86:c0:97:24:bb:99:1c:7f:fb"
