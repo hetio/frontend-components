@@ -1,0 +1,60 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: node:8.15.1-stretch
+    working_directory: ~/frontend-components
+    steps:
+      - checkout
+      - run:
+          name: Frontend test build
+          command: |
+            npm install
+            npm run build
+      - persist_to_workspace:
+          root: ~/frontend-components
+          paths:
+            - .git
+            - build
+
+  deploy:
+    docker:
+      - image: node:8.15.1-stretch
+    working_directory: ~/frontend-components
+    steps:
+      - attach_workspace:
+          at: ~/frontend-components
+      - run:
+          name: Install and configure dependencies
+          command: |
+            npm install
+      - add_ssh_keys:
+          fingerprints:
+            - "63:a6:74:80:69:f1:6d:86:c0:97:24:bb:99:1c:7f:fb"
+      - run:
+          name: Deploy build to build branch
+          command: |
+            echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+            gh-pages --dist build \
+              --branch build \
+              --user "CircleCI Deploy Job <ci-build@circleci.com>" \
+              --message \
+            "Deploy npm package on `date --utc --iso-8601`
+            Builds https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/commit/$CIRCLE_SHA1
+            Pushed by $CIRCLE_BUILD_URL
+            [skip ci]"
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test:
+          filters:
+            branches:
+              ignore: build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
