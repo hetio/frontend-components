@@ -35,11 +35,8 @@ jobs:
       - run:
           name: Deploy build to build branch
           command: |
-            set -o xtrace
             echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-            pwd
-            ls build
-            gh-pages --dist build \
+            gh-pages --dist . \
               --branch build \
               --user "CircleCI Deploy Job <ci-build@circleci.com>" \
               --message \
