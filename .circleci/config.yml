@@ -1,0 +1,33 @@
+version: 2
+
+jobs:
+  deploy:
+    docker:
+      - image: node:8.15.1-stretch
+    steps:
+      - run:
+          name: Install and configure dependencies
+          command: |
+            npm install
+      - add_ssh_keys:
+          fingerprints:
+            - "63:a6:74:80:69:f1:6d:86:c0:97:24:bb:99:1c:7f:fb"
+      - run:
+          name: Deploy build to build branch
+          command: |
+            echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+            build --dist build \
+              --user "CircleCI Deploy Job <ci-build@circleci.com>" \
+              --message \
+            "Deploy webpage on `date --utc --iso-8601`
+            Builds https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/commit/$CIRCLE_SHA1
+            Pushed by $CIRCLE_BUILD_URL
+            [skip ci]"
+workflows:
+  version: 2
+  build:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only: master
