@@ -1,0 +1,54 @@
+{
+  "name": "hetio-frontend-components",
+  "version": "0.0.1",
+  "description": "Frontend components shared across https://het.io",
+  "main": "build/index.js",
+  "module": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hetio/frontend-components.git"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/hetio/frontend-components",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.20",
+    "@fortawesome/free-solid-svg-icons": "^5.10.0",
+    "@fortawesome/react-fontawesome": "^0.1.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "rm -rf build && mkdir build && npx babel src --out-dir build --copy-files",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-react": "^7.0.0"
+  }
+}
