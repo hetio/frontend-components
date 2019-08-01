@@ -17,6 +17,8 @@ jobs:
           paths:
             - .git
             - build
+            - package.json
+            - package-lock.json
 
   deploy:
     docker:
