@@ -36,7 +36,8 @@ jobs:
           name: Deploy build to build branch
           command: |
             echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-            build --dist build \
+            gh-pages --dist build \
+              --branch build \
               --user "CircleCI Deploy Job <ci-build@circleci.com>" \
               --message \
             "Deploy npm package on `date --utc --iso-8601`
