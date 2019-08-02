@@ -158,4 +158,4 @@ var _string = require("./util/string.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-(0, _reactDom.render)(_react.default.createElement(_testBed.TestBed, null), document.getElementById('root'));
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') (0, _reactDom.render)(_react.default.createElement(_testBed.TestBed, null), document.getElementById('root'));

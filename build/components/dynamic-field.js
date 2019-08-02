@@ -52,6 +52,7 @@ function (_Component) {
     _this.onFocus = _this.onFocus.bind(_assertThisInitialized(_this));
     _this.deselectAll = _this.deselectAll.bind(_assertThisInitialized(_this));
     _this.selectAll = _this.selectAll.bind(_assertThisInitialized(_this));
+    _this.timer = null;
     return _this;
   } // when field is clicked or touched
 
@@ -63,42 +64,48 @@ function (_Component) {
       if (event && event.target && event.target.tagName.toLowerCase() === 'a') event.target.click(); // force focus on field
 
       this.field.current.focus();
-    }
+    } // when field loses focus
+
   }, {
     key: "onBlur",
-    // when field loses focus
     value: function onBlur() {
       this.setState({
         focused: false
-      }, this.deselectAll);
-    }
+      }, this.deselectAll); // clear any timer already going to select children
+
+      window.clearTimeout(this.timer);
+    } // when field is focused (tabbed to, clicked, etc)
+
   }, {
     key: "onFocus",
-    // when field is focused (tabbed to, clicked, etc)
     value: function onFocus() {
       this.setState({
         focused: true
       }, this.selectAll);
-    }
+    } // deselect any selected text in window
+
   }, {
     key: "deselectAll",
-    // deselect any selected text in window
     value: function deselectAll() {
       window.getSelection().empty();
-    }
+    } // select contents of field
+
   }, {
     key: "selectAll",
-    // select contents of field
     value: function selectAll() {
+      var _this2 = this;
+
       // set delay for select to make sure component has rendered
-      window.setTimeout(function () {
-        window.getSelection().empty();
-        window.getSelection().selectAllChildren(document.activeElement);
+      this.timer = window.setTimeout(function () {
+        if (document.activeElement === _this2.field.current) {
+          window.getSelection().empty();
+          window.getSelection().selectAllChildren(document.activeElement);
+        }
       }, 10);
-    }
+    } // display component
+
   }, {
     key: "render",
-    // display component
     value: function render() {
       var displayValue; // show full value if focused, or short value if not
 
