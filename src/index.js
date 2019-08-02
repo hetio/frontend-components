@@ -47,4 +47,5 @@ export { cutString };
 export { shortenUrl };
 export { makeFilenameFriendly };
 
-render(<TestBed />, document.getElementById('root'));
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
+  render(<TestBed />, document.getElementById('root'));
