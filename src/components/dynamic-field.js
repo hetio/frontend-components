@@ -20,6 +20,8 @@ export class DynamicField extends Component {
     this.onFocus = this.onFocus.bind(this);
     this.deselectAll = this.deselectAll.bind(this);
     this.selectAll = this.selectAll.bind(this);
+
+    this.timer = null;
   }
 
   // when field is clicked or touched
@@ -29,31 +31,35 @@ export class DynamicField extends Component {
       event.target.click();
     // force focus on field
     this.field.current.focus();
-  };
+  }
 
   // when field loses focus
   onBlur() {
     this.setState({ focused: false }, this.deselectAll);
-  };
+    // clear any timer already going to select children
+    window.clearTimeout(this.timer);
+  }
 
   // when field is focused (tabbed to, clicked, etc)
   onFocus() {
     this.setState({ focused: true }, this.selectAll);
-  };
+  }
 
   // deselect any selected text in window
   deselectAll() {
     window.getSelection().empty();
-  };
+  }
 
   // select contents of field
   selectAll() {
     // set delay for select to make sure component has rendered
-    window.setTimeout(function() {
-      window.getSelection().empty();
-      window.getSelection().selectAllChildren(document.activeElement);
+    this.timer = window.setTimeout(() => {
+      if (document.activeElement === this.field.current) {
+        window.getSelection().empty();
+        window.getSelection().selectAllChildren(document.activeElement);
+      }
     }, 10);
-  };
+  }
 
   // display component
   render() {
