@@ -680,17 +680,19 @@ class HeadCell extends Component {
           style={this.props.style || {}}
           className={this.props.className || ''}
         >
-          <Button
-            className='table_button'
-            onClick={() => this.context.changeSort(this.props.field)}
-          >
-            {this.props.content}
-            <FontAwesomeIcon
-              icon={sortUp ? faSortAmountUp : faSortAmountDownAlt}
-              className='fa-lg table_sort_icon'
-              data-disabled={this.props.field !== this.context.sortField}
-            />
-          </Button>
+          {this.props.content && (
+            <Button
+              className='table_button'
+              onClick={() => this.context.changeSort(this.props.field)}
+            >
+              {this.props.content}
+              <FontAwesomeIcon
+                icon={sortUp ? faSortAmountUp : faSortAmountDownAlt}
+                className='fa-lg table_sort_icon'
+                data-disabled={this.props.field !== this.context.sortField}
+              />
+            </Button>
+          )}
         </th>
       </Tooltip>
     );

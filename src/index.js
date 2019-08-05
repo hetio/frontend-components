@@ -1,7 +1,7 @@
-import React from 'react';
-import { render } from 'react-dom';
-
-import { TestBed } from './test-bed.js';
+// for testing the components. do not include in distribution build
+// import React from 'react';
+// import { render } from 'react-dom';
+// import { TestBed } from './test-bed.js';
 
 import { Button } from './components/buttons.js';
 import { IconButton } from './components/buttons.js';
@@ -47,5 +47,5 @@ export { cutString };
 export { shortenUrl };
 export { makeFilenameFriendly };
 
-if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
-  render(<TestBed />, document.getElementById('root'));
+// for testing the components. do not include in distribution build
+// render(<TestBed />, document.getElementById('root'));
