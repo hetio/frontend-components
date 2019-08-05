@@ -56,14 +56,28 @@ export class Table extends Component {
     this.state.searchResults = 0;
     this.state.page = 1;
     this.state.pages = 1;
-    this.state.perPage = 10;
+    this.state.perPages = this.props.perPages || [
+      5,
+      10,
+      15,
+      25,
+      50,
+      100,
+      500,
+      1000,
+      'all'
+    ];
+    this.state.perPage = this.props.defaultPerPage || 10;
     this.state.dragField = null;
     this.state.dragValue = null;
-    this.state.dragList = [];
+    // this needs to be a class prop so it can update synchronously
+    // it is okay because it does not affect re-rendering of children
+    this.dragList = [];
 
     // end checkbox drag when mouse released anywhere
-    window.addEventListener('mouseup', this.endDrag);
+    window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('mouseup', this.onMouseUp);
   }
 
   // when component mounts
@@ -94,7 +108,10 @@ export class Table extends Component {
       // if number of input data rows hasn't changed, assume none were added,
       // deleted, or reordered, and preserve previous sorting
       // assumes prevState.indexedData and newState.indexedData in same order
-      if (this.props.data.length === prevProps.data.length) {
+      if (
+        this.props.dontResort &&
+        this.props.data.length === prevProps.data.length
+      ) {
         newState.sortedData = this.preserveSortData(
           prevState.sortedData,
           newState.indexedData
@@ -158,7 +175,7 @@ export class Table extends Component {
     this.setState({ hovered: hovered });
   };
 
-  // when user presses key
+  // when user presses key anywhere in window
   onKeyDown = (event) => {
     if (!this.ref.current)
       return;
@@ -180,6 +197,16 @@ export class Table extends Component {
       else
         this.setPage(this.state.page + 1);
     }
+  };
+
+  // when user moves mouse anywhere
+  onMouseMove = (event) => {
+    this.setState({ mouseX: event.clientX, mouseY: event.clientY });
+  };
+
+  // when user releases mouse anywhere
+  onMouseUp = (event) => {
+    this.endDrag(event);
   };
 
   // //////////////////////////////////////////////////
@@ -297,7 +324,10 @@ export class Table extends Component {
       return data;
 
     return data.filter((datum) => {
-      for (const field of this.props.headFields) {
+      const searchFields = this.props.searchAllFields
+        ? Object.keys(datum)
+        : this.props.headFields;
+      for (const field of searchFields) {
         if (
           String(JSON.stringify(datum[field]))
             .toLowerCase()
@@ -315,8 +345,12 @@ export class Table extends Component {
   paginateData = (data) => {
     data = copyObject(data);
 
-    const start = (this.state.page - 1) * this.state.perPage;
-    const end = start + this.state.perPage;
+    let start = 0;
+    let end = data.length;
+    if (typeof this.state.perPage === 'number') {
+      start = (this.state.page - 1) * this.state.perPage;
+      end = start + this.state.perPage;
+    }
 
     return data.slice(start, end);
   };
@@ -397,8 +431,8 @@ export class Table extends Component {
 
   // add row index to drag list
   addToDragList = (rowIndex) => {
-    if (!this.state.dragList.includes(rowIndex))
-      this.setState({ dragList: [...this.state.dragList, rowIndex] });
+    if (!this.dragList.includes(rowIndex))
+      this.dragList.push(rowIndex);
   };
 
   // end dragging checkboxes
@@ -406,7 +440,7 @@ export class Table extends Component {
     if (
       !this.state.dragField ||
       typeof this.state.dragValue !== 'boolean' ||
-      !this.state.dragList.length
+      !this.dragList.length
     ) {
       this.resetDrag();
       return;
@@ -415,7 +449,7 @@ export class Table extends Component {
     const newData = copyObject(this.state.indexedData);
 
     for (const datum of newData) {
-      if (this.state.dragList.includes(datum[rowIndexKey]))
+      if (this.dragList.includes(datum[rowIndexKey]))
         datum[this.state.dragField] = this.state.dragValue;
     }
 
@@ -425,7 +459,8 @@ export class Table extends Component {
 
   // cancel dragging checkboxes
   resetDrag = () => {
-    this.setState({ dragField: null, dragValue: null, dragList: [] });
+    this.dragList = [];
+    this.setState({ dragField: null, dragValue: null });
   };
 
   // //////////////////////////////////////////////////
@@ -473,16 +508,22 @@ export class Table extends Component {
 
   // set per page
   setPerPage = (value) => {
-    value = Number(value);
-    if (Number.isNaN(value))
-      value = 10;
+    if (typeof value !== 'number') {
+      if (Number.isNaN(Number(value)))
+        value = 'all';
+      else
+        value = Number(value);
+    }
 
     this.setState({ perPage: value, page: 1 });
   };
 
   // calculate number of pages based on results and per page
   calcPages = (data, perPage) => {
-    return Math.ceil(data.length / perPage);
+    if (typeof perPage === 'number')
+      return Math.ceil(data.length / perPage);
+    else
+      return 1;
   };
 
   // display component
@@ -491,6 +532,8 @@ export class Table extends Component {
       <TableContext.Provider
         value={{
           setHovered: this.setHovered,
+          mouseX: this.state.mouseX,
+          mouseY: this.state.mouseY,
           data: this.state.data,
           // checkbox props
           dragField: this.state.dragField,
@@ -516,6 +559,7 @@ export class Table extends Component {
           // page props
           page: this.state.page,
           pages: this.state.pages,
+          perPages: this.state.perPages,
           perPage: this.state.perPage,
           // page functions
           setPage: this.setPage,
@@ -761,19 +805,46 @@ class BodyCheckboxCell extends Component {
 
     this.state = {};
     // temporary checked state for dragging
-    this.tempChecked = null;
+    this.state.tempChecked = null;
+    // track previous y of mouse
+    this.prevMouseY = 0;
 
     this.onCtrlClick = this.onCtrlClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
 
     window.addEventListener('mouseup', this.onMouseUp);
+
+    this.ref = React.createRef();
   }
 
   // when component unmounts
   componentWillUnmount() {
     window.removeEventListener('mouseup', this.onMouseUp);
+  }
+
+  // when component updates
+  // fires when receiving new mouse position from context
+  componentDidUpdate() {
+    // if this column is the column being dragged
+    if (
+      this.context.dragField === this.props.field &&
+      typeof this.context.dragValue === 'boolean'
+    ) {
+      // if mouse passes by button vertically
+      const bbox = this.ref.current.getBoundingClientRect();
+      if (
+        (this.prevMouseY < bbox.top && this.context.mouseY >= bbox.top) ||
+        (this.prevMouseY > bbox.bottom && this.context.mouseY <= bbox.bottom)
+      ) {
+        // add self to drag list and temp check
+        this.context.addToDragList(this.props.datum[rowIndexKey]);
+        this.setState({ tempChecked: this.context.dragValue });
+      }
+    }
+
+    // track previous y of mouse
+    this.prevMouseY = this.context.mouseY;
   }
 
   // on ctrl+click
@@ -786,18 +857,6 @@ class BodyCheckboxCell extends Component {
     this.context.beginDrag(this.props.field, !this.props.checked);
     this.context.addToDragList(this.props.datum[rowIndexKey]);
     this.setState({ tempChecked: !this.props.checked });
-  }
-
-  // on mouse move over button
-  onMouseMove() {
-    // if this column is the column being dragged, add self to drag list
-    if (
-      this.context.dragField === this.props.field &&
-      typeof this.context.dragValue === 'boolean'
-    ) {
-      this.context.addToDragList(this.props.datum[rowIndexKey]);
-      this.setState({ tempChecked: this.context.dragValue });
-    }
   }
 
   // on mouse up anywhere
@@ -820,12 +879,11 @@ class BodyCheckboxCell extends Component {
 
     return (
       <Tooltip text={tooltip}>
-        <td style={style} className={className}>
+        <td style={style} className={className} ref={this.ref}>
           <Button
             className={'table_button'}
             onCtrlClick={this.onCtrlClick}
             onMouseDown={this.onMouseDown}
-            onMouseMove={this.onMouseMove}
           >
             <div data-checked={checked}>{this.props.content}</div>
           </Button>
@@ -973,13 +1031,11 @@ class PerPage extends Component {
               value={String(this.context.perPage)}
               onChange={this.onChange}
             >
-              <option value='5'>5</option>
-              <option value='10'>10</option>
-              <option value='25'>25</option>
-              <option value='50'>50</option>
-              <option value='100'>100</option>
-              <option value='500'>500</option>
-              <option value='1000'>1000</option>
+              {this.context.perPages.map((entry, index) => (
+                <option key={index} value={entry}>
+                  {entry}
+                </option>
+              ))}
             </select>
           </Tooltip>
           <FontAwesomeIcon icon={faListOl} className='fa-sm' />

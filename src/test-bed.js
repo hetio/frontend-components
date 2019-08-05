@@ -22,7 +22,7 @@ export class TestBed extends Component {
     this.state.data = [];
 
     // generate random dummy table data
-    for (let n = 0; n < 4321; n++) {
+    for (let n = 0; n < 321; n++) {
       this.state.data.push({
         checked: Math.random() > 0.75,
         text:
@@ -37,7 +37,8 @@ export class TestBed extends Component {
           (Math.random() > 0.5 ? '🍎' : '🍇') +
           (Math.random() > 0.5 ? '🍎' : '🍇') +
           (Math.random() > 0.5 ? '🍎' : '🍇') +
-          (Math.random() > 0.5 ? '🍎' : '🍇')
+          (Math.random() > 0.5 ? '🍎' : '🍇'),
+        hiddenField: Math.random() > 0.5 ? 'Cat' : 'Dog'
       });
     }
   }
@@ -47,16 +48,16 @@ export class TestBed extends Component {
       <>
         {/* load global, site-wide styles from het.io */}
         <link
-          rel="stylesheet"
-          type="text/css"
-          href="https://het.io/global.css"
+          rel='stylesheet'
+          type='text/css'
+          href='https://het.io/global.css'
         />
         <br />
         <br />
         <Button
           onClick={() => console.log('button click')}
           onCtrlClick={() => console.log('button ctrl+click')}
-          tooltipText="Generic button tooltip text"
+          tooltipText='Generic button tooltip text'
         >
           Generic Button
         </Button>
@@ -64,18 +65,18 @@ export class TestBed extends Component {
         <br />
         <IconButton
           icon={faStar}
-          text="Icon Button"
-          tooltipText="Icon button tooltip text"
+          text='Icon Button'
+          tooltipText='Icon button tooltip text'
         />
         <br />
         <br />
-        <Tooltip text="Generic element tooltip">
+        <Tooltip text='Generic element tooltip'>
           <span>Generic element tooltip</span>
         </Tooltip>
         <br />
         <br />
         <span style={{ display: 'inline-block', width: '200px' }}>
-          <DynamicField value="Dynamic field" fullValue="full/long value" />
+          <DynamicField value='Dynamic field' fullValue='full/long value' />
         </span>
         <br />
         <br />
@@ -86,6 +87,7 @@ export class TestBed extends Component {
         <i>{this.state.data.filter((datum) => datum.checked).length} starred</i>
         <Table
           data={this.state.data}
+          searchAllFields={true}
           sortFunction={(field) => {
             // sort by number of apples
             if (field === 'fruit') {
@@ -112,7 +114,7 @@ export class TestBed extends Component {
             }
           }}
           onChange={(newData) => this.setState({ data: newData })}
-          defaultSortField="smallNumber"
+          defaultSortField='smallNumber'
           defaultSortUp={false}
           topContents={[null, null, 'numbers', null]}
           topStyles={[
@@ -134,7 +136,7 @@ export class TestBed extends Component {
             'Sort by number of apples'
           ]}
           headContents={[
-            <FontAwesomeIcon className="fa-xs" icon={faStar} />,
+            <FontAwesomeIcon className='fa-xs' icon={faStar} />,
             'Text',
             'Small Number',
             'Big Number',
