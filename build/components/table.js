@@ -888,7 +888,7 @@ function (_Component6) {
       }, _react.default.createElement("th", {
         style: this.props.style || {},
         className: this.props.className || ''
-      }, _react.default.createElement(_buttons.Button, {
+      }, this.props.content && _react.default.createElement(_buttons.Button, {
         className: "table_button",
         onClick: function onClick() {
           return _this6.context.changeSort(_this6.props.field);

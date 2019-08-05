@@ -130,12 +130,6 @@ Object.defineProperty(exports, "makeFilenameFriendly", {
   }
 });
 
-var _react = _interopRequireDefault(require("react"));
-
-var _reactDom = require("react-dom");
-
-var _testBed = require("./test-bed.js");
-
 var _buttons = require("./components/buttons.js");
 
 var _tooltip = require("./components/tooltip.js");
@@ -155,7 +149,3 @@ var _format = require("./util/format.js");
 var _object = require("./util/object.js");
 
 var _string = require("./util/string.js");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') (0, _reactDom.render)(_react.default.createElement(_testBed.TestBed, null), document.getElementById('root'));
