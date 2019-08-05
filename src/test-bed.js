@@ -87,6 +87,9 @@ export class TestBed extends Component {
         <i>{this.state.data.filter((datum) => datum.checked).length} starred</i>
         <Table
           data={this.state.data}
+          fields={['checked', 'text', 'smallNumber', 'bigNumber', 'fruit']}
+          checkboxes={[true]}
+          sortables={[false, true, true, true, true]}
           searchAllFields={true}
           sortFunction={(field) => {
             // sort by number of apples
@@ -126,8 +129,28 @@ export class TestBed extends Component {
           ]}
           topClasses={['small', 'small', 'small']}
           topColspans={[1, 1, 2, 1]}
-          headClasses={[null, 'small left', 'small', 'small', 'small']}
-          headFields={['checked', 'text', 'smallNumber', 'bigNumber', 'fruit']}
+          headContents={[
+            <FontAwesomeIcon className='fa-xs' icon={faStar} />,
+            'Text',
+            <>
+              Small
+              <br />
+              Number
+            </>,
+            <>
+              Big
+              <br />
+              Number
+            </>,
+            'Fruit'
+          ]}
+          headClasses={[
+            'center',
+            'small left',
+            'small center',
+            'small center',
+            'small center'
+          ]}
           headTooltips={[
             'Starred',
             'Text field',
@@ -135,26 +158,29 @@ export class TestBed extends Component {
             'Big number field',
             'Sort by number of apples'
           ]}
-          headContents={[
+          bodyContents={[
             <FontAwesomeIcon className='fa-xs' icon={faStar} />,
-            'Text',
-            'Small Number',
-            'Big Number',
-            'Fruit'
-          ]}
-          bodyValues={[
-            null,
-            null,
-            (datum) => toExponential(datum.smallNumber),
-            (datum) => toComma(datum.bigNumber)
+            (datum, field, value) => <DynamicField value={value} />,
+            (datum, field, value) => (
+              <DynamicField value={toExponential(value)} fullValue={value} />
+            ),
+            (datum, field, value) => (
+              <DynamicField value={toComma(value)} fullValue={value} />
+            ),
+            (datum, field, value) => value
           ]}
           bodyStyles={[
             null,
             null,
-            (datum) => ({ background: toGradient(datum.smallNumber) })
+            (datum, field, value) => ({
+              background: toGradient(value)
+            })
           ]}
-          bodyClasses={[null, 'left']}
-          bodyTooltips={[null, (datum) => datum.text + ' is my username']}
+          bodyClasses={['center', 'left', 'center', 'center', 'center']}
+          bodyTooltips={[
+            null,
+            (datum, field, value) => value + ' is my username'
+          ]}
         />
       </>
     );
