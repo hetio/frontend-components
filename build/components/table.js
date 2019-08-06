@@ -535,7 +535,7 @@ function (_Component) {
     _defineProperty(_assertThisInitialized(_this), "beginDrag", function (field, newChecked) {
       _this.setState({
         dragField: field,
-        dragValue: newChecked
+        dragValue: newChecked ? true : false
       });
     });
 
@@ -966,7 +966,7 @@ function (_Component6) {
       var _this6 = this;
 
       var sortUp = true;
-      if (this.props.field === this.context.sortField && this.context.sortUp) sortUp = false;
+      if (this.props.field === this.context.sortField && !this.context.sortUp) sortUp = false;
       return _react.default.createElement(_tooltip.Tooltip, {
         text: this.props.tooltip || ''
       }, _react.default.createElement("th", {
