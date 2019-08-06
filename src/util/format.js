@@ -20,10 +20,10 @@ export function toExponential(number) {
 }
 
 // get html of number in regular form, rounded to 1 decimal digit
-export function toFixed(number) {
+export function toFixed(number, precision) {
   if (typeof number !== 'number')
     return '-';
-  return <span>{parseFloat(number).toFixed(1)}</span>;
+  return parseFloat(number).toFixed(precision || 1);
 }
 
 // split many-digit number by comma (or other, depending on locale)
