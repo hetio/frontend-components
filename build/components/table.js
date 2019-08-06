@@ -60,6 +60,8 @@ var cellHighlightKey = '_cellHighlight'; // ////////////////////////////////////
 // keys from 'data' that will represent and determine the order of the columns
 // containerClass - string
 // the className to be applied to the div surrounding the <table> element
+// className - string
+// the className to be applied to the <table> element
 // onChange - function
 // called when a checkbox or group of checkboxes change state
 // called with the arguments (newData)
@@ -791,7 +793,7 @@ function (_Component) {
           return _this2.setHovered(false);
         }
       }, _react.default.createElement("table", {
-        className: this.props.className
+        className: this.props.className || ''
       }, _react.default.createElement("thead", null, _react.default.createElement(Top, null), _react.default.createElement(Head, null)), _react.default.createElement("tbody", null, _react.default.createElement(Body, null)))), _react.default.createElement(Controls, null));
     }
   }]);
