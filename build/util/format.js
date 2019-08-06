@@ -23,9 +23,9 @@ function toExponential(number) {
 } // get html of number in regular form, rounded to 1 decimal digit
 
 
-function toFixed(number) {
+function toFixed(number, precision) {
   if (typeof number !== 'number') return '-';
-  return _react.default.createElement("span", null, parseFloat(number).toFixed(1));
+  return parseFloat(number).toFixed(precision || 1);
 } // split many-digit number by comma (or other, depending on locale)
 
 
