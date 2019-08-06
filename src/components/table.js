@@ -527,7 +527,7 @@ export class Table extends Component {
 
   // begin dragging checkboxes
   beginDrag = (field, newChecked) => {
-    this.setState({ dragField: field, dragValue: newChecked });
+    this.setState({ dragField: field, dragValue: newChecked ? true : false });
   };
 
   // add row index to drag list
@@ -811,7 +811,7 @@ class HeadSortableCell extends Component {
   // display component
   render() {
     let sortUp = true;
-    if (this.props.field === this.context.sortField && this.context.sortUp)
+    if (this.props.field === this.context.sortField && !this.context.sortUp)
       sortUp = false;
 
     return (
