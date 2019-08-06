@@ -1,7 +1,7 @@
 // for testing the components. do not include in distribution build
-import React from 'react';
-import { render } from 'react-dom';
-import { TestBed } from './test-bed.js';
+// import React from 'react';
+// import { render } from 'react-dom';
+// import { TestBed } from './test-bed.js';
 
 import { Button } from './components/buttons.js';
 import { IconButton } from './components/buttons.js';
@@ -48,4 +48,4 @@ export { shortenUrl };
 export { makeFilenameFriendly };
 
 // for testing the components. do not include in distribution build
-render(<TestBed />, document.getElementById('root'));
+// render(<TestBed />, document.getElementById('root'));

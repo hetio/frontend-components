@@ -6,6 +6,44 @@ import { Tooltip } from './tooltip.js';
 
 // styles from global.css on het.io
 
+// //////////////////////////////////////////////////
+// INPUT PROPS
+// //////////////////////////////////////////////////
+
+// children - jsx
+// children react components to put inside the button
+
+// onClick - function
+// called when button is clicked
+
+// onCtrlClick - function
+// called when button is clicked and ctrl button is held
+
+// onShiftClick - function
+// called when button is clicked and shift button is held
+
+// onMouseDown - function
+// called when mouse is pressed down on button
+
+// onMouseMove - function
+// called when mouse moves over button
+
+// onMouseUp - function
+// called when mouse is released on button
+
+// className - string
+// the className to apply to the button
+
+// tooltipText - string
+// text to display in tooltip when button is hovered
+
+// disabled - boolean
+// the data-disabled attribute value to be applied to the button
+
+// //////////////////////////////////////////////////
+// COMPONENT
+// //////////////////////////////////////////////////
+
 // button component
 export class Button extends Component {
   // initialize component
@@ -66,6 +104,26 @@ export class Button extends Component {
     );
   }
 }
+
+// //////////////////////////////////////////////////
+// INPUT PROPS
+// //////////////////////////////////////////////////
+
+// same as Button above, and...
+
+// text - string
+// text to display in the button
+
+// icon - FontAwesomeIcon
+// the font awesome icon object from '@fortawesome/free-solid-svg-icons' to
+// display next to the text
+
+// checked - boolean
+// the data-checked attribute value to be applied to the button
+
+// //////////////////////////////////////////////////
+// COMPONENT
+// //////////////////////////////////////////////////
 
 // icon button component
 // link colored button with text and icon to right
