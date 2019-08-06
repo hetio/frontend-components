@@ -3,6 +3,23 @@ import { Component } from 'react';
 
 import './dynamic-field.css';
 
+// //////////////////////////////////////////////////
+// INPUT PROPS
+// //////////////////////////////////////////////////
+
+// value - jsx
+// the "normal" value to display when the field isn't focused
+
+// fullValue - jsx
+// the "full" value to display when the field is focused
+
+// className - string
+// the className to apply to the field
+
+// //////////////////////////////////////////////////
+// COMPONENT
+// //////////////////////////////////////////////////
+
 // expandable textbox-like component, similar to excel spreadsheet cell
 // when focused, field expands and prop "fullValue" displayed,
 // otherwise, prop "value" displayed (often "fullValue" rounded off)

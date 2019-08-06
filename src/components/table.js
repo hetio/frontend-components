@@ -13,7 +13,6 @@ import { faListOl } from '@fortawesome/free-solid-svg-icons';
 
 import { Button } from './buttons.js';
 import { Tooltip } from './tooltip.js';
-import { DynamicField } from './dynamic-field.js';
 import { compareObjects } from '../util/object.js';
 import { copyObject } from '../util/object.js';
 
@@ -22,15 +21,115 @@ import './table.css';
 const rowIndexKey = '_rowIndex';
 const cellHighlightKey = '_cellHighlight';
 
+// //////////////////////////////////////////////////
+// INPUT PROPS
+// //////////////////////////////////////////////////
+
+// data - [{}]
+// the data structure that will populate the table in the format:
+// [ ... {pet: 'cat', num: 42, ... } , {pet: 'dog', num: 3.14, ... } ... ]
+
+// fields - [string]
+// keys from 'data' that will represent and determine the order of the columns
+
+// containerClass - string
+// the className to be applied to the div surrounding the <table> element
+
+// onChange - function
+// called when a checkbox or group of checkboxes change state
+// called with the arguments (newData)
+
+// sortFunction - function
+// called when data is sorted. called with the arguments (field)
+// should return a comparison method for the javascript sort() function
+// if it doesn't return a function, a default comparison method is used
+
+// sortables - [boolean]
+// whether or not to allow each column to be sortable
+
+// checkboxes - [boolean]
+// whether or not to treat each column as a checkbox field
+
+// defaultSortField - string
+// field to sort table by by default
+
+// defaultSortUp - boolean
+// whether or not to sort default field up by default
+
+// defaultPerPage - number|string
+// amount of row entries to show by default
+// when per page value is string, all rows are shown
+
+// perPages - [number|string]
+// the options to provide for the per page dropdown
+
+// dontResort - boolean
+// whether or not to "preserve" row order when the input data changed but the
+// number of rows didn't
+
+// searchAllFields - boolean
+// whether or not to search all the fields in the data object
+// if false or omitted, only the displayed fields/columns are searched
+
+// //////////////////////////////////////////////////
+
+// topContents - [jsx]
+// the text or other content to be displayed in the row above the head row
+
+// topStyles - [{}]
+// the style object to apply to each column of topContents
+
+// topClasses - [string]
+// the className to apply to each column of topContents
+
+// topColspans - [number]
+// the html colSpan attribute to apply to each column of topContents
+
+// headContents - [jsx]
+// the text or other content to be displayed in the head row
+
+// headStyles - [{}]
+// the style object to apply to each column
+
+// headClasses - [string]
+// the className to apply to each column
+
+// headTooltips- [string]
+// the tooltip text to display when hovering over each head cell
+
+// //////////////////////////////////////////////////
+
+// NOTE: The body input props below all accept either a static value or a
+// function will be called with the arguments (datum, field, value) that
+// should return a static value of the appropriate type.
+
+// bodyContents - [jsx|function]
+// the text or other content to be displayed for each row of data
+
+// bodyStyles - [{}|function]
+// the style object to apply to each column
+
+// bodyClasses - [string|function]
+// the className to apply to each column
+
+// bodyTooltips - [string|function]
+// the tooltip text to display when hovering over each body cell
+
+// //////////////////////////////////////////////////
+// NOTES
+// //////////////////////////////////////////////////
+
+// Certain items get html data- attributes to allow CSS styling:
+// sort arrows - data-disabled
+// checkboxes - data-checked
+// search highlighted cells - data-highlighted
+// page arrow buttons - data-disabled
+
+// //////////////////////////////////////////////////
+// COMPONENT
+// //////////////////////////////////////////////////
+
 // generic table component
-// contains three sections: top (row above head), head, and body
-// contents, styles, and classes can be specified for all sections
-// tooltips can be specified for head and body
-// colspans can be specified for top
-// custom sort function can be specified
-// supports img or font-awesome checkboxes
-// checkboxes get the attribute data-checked to allow desired CSS styling
-// sort arrows get the attribute data-disabled to allow desired CSS styling
 export class Table extends Component {
   // initialize component
   constructor(props) {
@@ -40,7 +139,6 @@ export class Table extends Component {
     this.ref = React.createRef();
 
     this.state = {};
-    this.state.hovered = false;
 
     // input data at different stages in processing chain
     this.state.indexedData = [];
@@ -49,21 +147,35 @@ export class Table extends Component {
     this.state.paginatedData = [];
     // final data passed to children for render
     this.state.data = [];
+
     // table control vars
+    this.state.hovered = false;
     this.state.sortField = this.props.defaultSortField || '';
     this.state.sortUp = this.props.defaultSortUp || false;
     this.state.searchString = '';
     this.state.searchResults = 0;
     this.state.page = 1;
     this.state.pages = 1;
-    this.state.perPage = 10;
+    this.state.perPages = this.props.perPages || [
+      5,
+      10,
+      15,
+      25,
+      50,
+      100,
+      500,
+      1000,
+      'all'
+    ];
+    this.state.perPage = this.props.defaultPerPage || 10;
     this.state.dragField = null;
     this.state.dragValue = null;
     this.state.dragList = [];
 
     // end checkbox drag when mouse released anywhere
-    window.addEventListener('mouseup', this.endDrag);
+    window.addEventListener('mousemove', this.onMouseMove);
     window.addEventListener('keydown', this.onKeyDown);
+    window.addEventListener('mouseup', this.onMouseUp);
   }
 
   // when component mounts
@@ -88,13 +200,16 @@ export class Table extends Component {
     // when input data changes
     if (
       !compareObjects(this.props.data, prevProps.data) ||
-      !compareObjects(this.props.headFields, prevProps.headFields)
+      !compareObjects(this.props.fields, prevProps.fields)
     ) {
       newState.indexedData = this.indexData(this.props.data);
       // if number of input data rows hasn't changed, assume none were added,
       // deleted, or reordered, and preserve previous sorting
       // assumes prevState.indexedData and newState.indexedData in same order
-      if (this.props.data.length === prevProps.data.length) {
+      if (
+        this.props.dontResort &&
+        this.props.data.length === prevProps.data.length
+      ) {
         newState.sortedData = this.preserveSortData(
           prevState.sortedData,
           newState.indexedData
@@ -158,7 +273,7 @@ export class Table extends Component {
     this.setState({ hovered: hovered });
   };
 
-  // when user presses key
+  // when user presses key anywhere in window
   onKeyDown = (event) => {
     if (!this.ref.current)
       return;
@@ -180,6 +295,16 @@ export class Table extends Component {
       else
         this.setPage(this.state.page + 1);
     }
+  };
+
+  // when user moves mouse anywhere
+  onMouseMove = (event) => {
+    this.setState({ mouseX: event.clientX, mouseY: event.clientY });
+  };
+
+  // when user releases mouse anywhere
+  onMouseUp = (event) => {
+    this.endDrag(event);
   };
 
   // //////////////////////////////////////////////////
@@ -297,7 +422,10 @@ export class Table extends Component {
       return data;
 
     return data.filter((datum) => {
-      for (const field of this.props.headFields) {
+      const searchFields = this.props.searchAllFields
+        ? Object.keys(datum)
+        : this.props.fields;
+      for (const field of searchFields) {
         if (
           String(JSON.stringify(datum[field]))
             .toLowerCase()
@@ -315,8 +443,12 @@ export class Table extends Component {
   paginateData = (data) => {
     data = copyObject(data);
 
-    const start = (this.state.page - 1) * this.state.perPage;
-    const end = start + this.state.perPage;
+    let start = 0;
+    let end = data.length;
+    if (typeof this.state.perPage === 'number') {
+      start = (this.state.page - 1) * this.state.perPage;
+      end = start + this.state.perPage;
+    }
 
     return data.slice(start, end);
   };
@@ -398,7 +530,7 @@ export class Table extends Component {
   // add row index to drag list
   addToDragList = (rowIndex) => {
     if (!this.state.dragList.includes(rowIndex))
-      this.setState({ dragList: [...this.state.dragList, rowIndex] });
+      this.setState((state) => ({ dragList: [...state.dragList, rowIndex] }));
   };
 
   // end dragging checkboxes
@@ -473,16 +605,22 @@ export class Table extends Component {
 
   // set per page
   setPerPage = (value) => {
-    value = Number(value);
-    if (Number.isNaN(value))
-      value = 10;
+    if (typeof value !== 'number') {
+      if (Number.isNaN(Number(value)))
+        value = 'all';
+      else
+        value = Number(value);
+    }
 
     this.setState({ perPage: value, page: 1 });
   };
 
   // calculate number of pages based on results and per page
   calcPages = (data, perPage) => {
-    return Math.ceil(data.length / perPage);
+    if (typeof perPage === 'number')
+      return Math.ceil(data.length / perPage);
+    else
+      return 1;
   };
 
   // display component
@@ -490,9 +628,13 @@ export class Table extends Component {
     return (
       <TableContext.Provider
         value={{
+          // give props to TableContext that children components may need
+
+          // mouse
           setHovered: this.setHovered,
-          data: this.state.data,
-          // checkbox props
+          mouseX: this.state.mouseX,
+          mouseY: this.state.mouseY,
+          // checkbox
           dragField: this.state.dragField,
           dragValue: this.state.dragValue,
           // checkbox functions
@@ -503,42 +645,42 @@ export class Table extends Component {
           beginDrag: this.beginDrag,
           addToDragList: this.addToDragList,
           resetDrag: this.resetDrag,
-          // sort props
+          // sort
           sortField: this.state.sortField,
           sortUp: this.state.sortUp,
-          // sort functions
           changeSort: this.changeSort,
-          // search props
+          // search
           searchString: this.state.searchString,
           searchResults: this.state.searchResults,
-          // search/filter functions
           onSearch: this.onSearch,
-          // page props
+          // page
           page: this.state.page,
           pages: this.state.pages,
           perPage: this.state.perPage,
-          // page functions
           setPage: this.setPage,
           setPerPage: this.setPerPage,
-          // table input
+          // component input props
+          data: this.state.data,
+          fields: this.props.fields || [],
+          checkboxes: this.props.checkboxes || [],
+          sortables: this.props.sortables || [],
+          perPages: this.state.perPages,
           topContents: this.props.topContents || [],
           topStyles: this.props.topStyles || [],
           topClasses: this.props.topClasses || [],
           topColspans: this.props.topColspans || [],
           headContents: this.props.headContents || [],
-          headFields: this.props.headFields || [],
           headStyles: this.props.headStyles || [],
           headClasses: this.props.headClasses || [],
           headTooltips: this.props.headTooltips || [],
-          bodyValues: this.props.bodyValues || [],
-          bodyFullValues: this.props.bodyFullValues || [],
+          bodyContents: this.props.bodyContents || [],
           bodyStyles: this.props.bodyStyles || [],
           bodyClasses: this.props.bodyClasses || [],
           bodyTooltips: this.props.bodyTooltips || []
         }}
       >
         <div
-          className={this.props.containerClass}
+          className={this.props.containerClass || ''}
           ref={this.ref}
           onMouseEnter={() => this.setHovered(true)}
           onMouseLeave={() => this.setHovered(false)}
@@ -605,30 +747,21 @@ TopCell.contextType = TableContext;
 class Head extends Component {
   // display component
   render() {
-    const cells = this.context.headContents.map((content, index) => {
-      if (typeof content.type === 'function') {
-        return (
-          <HeadCheckboxCell
-            key={index}
-            content={content}
-            field={this.context.headFields[index]}
-            style={this.context.headStyles[index]}
-            className={this.context.headClasses[index]}
-            tooltip={this.context.headTooltips[index]}
-          />
-        );
-      } else {
-        return (
-          <HeadCell
-            key={index}
-            content={content}
-            field={this.context.headFields[index]}
-            style={this.context.headStyles[index]}
-            className={this.context.headClasses[index]}
-            tooltip={this.context.headTooltips[index]}
-          />
-        );
-      }
+    const cells = this.context.fields.map((field, index) => {
+      const props = {
+        key: index,
+        field: field,
+        content: this.context.headContents[index],
+        style: this.context.headStyles[index],
+        className: this.context.headClasses[index],
+        tooltip: this.context.headTooltips[index]
+      };
+      if (this.context.checkboxes[index] && this.context.headContents[index])
+        return <HeadCheckboxCell {...props} />;
+      else if (this.context.sortables[index])
+        return <HeadSortableCell {...props} />;
+      else
+        return <HeadCell {...props} />;
     });
 
     if (cells.length > 0)
@@ -655,7 +788,7 @@ class HeadCheckboxCell extends Component {
             onClick={() => this.context.toggleAll(this.props.field)}
           >
             <span data-checked={this.context.allChecked(this.props.field)}>
-              {this.props.content}
+              {this.props.content || ''}
             </span>
           </Button>
         </th>
@@ -665,9 +798,9 @@ class HeadCheckboxCell extends Component {
 }
 HeadCheckboxCell.contextType = TableContext;
 
-// head cell
+// head sortable cell
 // contains sort button
-class HeadCell extends Component {
+class HeadSortableCell extends Component {
   // display component
   render() {
     let sortUp = true;
@@ -680,25 +813,41 @@ class HeadCell extends Component {
           style={this.props.style || {}}
           className={this.props.className || ''}
         >
-          {this.props.content && (
-            <Button
-              className='table_button'
-              onClick={() => this.context.changeSort(this.props.field)}
-            >
-              {this.props.content}
-              <FontAwesomeIcon
-                icon={sortUp ? faSortAmountUp : faSortAmountDownAlt}
-                className='fa-lg table_sort_icon'
-                data-disabled={this.props.field !== this.context.sortField}
-              />
-            </Button>
-          )}
+          <Button
+            className='table_button'
+            onClick={() => this.context.changeSort(this.props.field)}
+          >
+            {this.props.content || ''}
+            <FontAwesomeIcon
+              icon={sortUp ? faSortAmountUp : faSortAmountDownAlt}
+              className='fa-lg table_sort_icon'
+              data-disabled={this.props.field !== this.context.sortField}
+            />
+          </Button>
         </th>
       </Tooltip>
     );
   }
 }
-HeadCell.contextType = TableContext;
+HeadSortableCell.contextType = TableContext;
+
+// plain head cell
+class HeadCell extends Component {
+  // display component
+  render() {
+    return (
+      <Tooltip text={this.props.tooltip || ''}>
+        <th
+          style={this.props.style || {}}
+          className={this.props.className || ''}
+        >
+          {this.props.content || ''}
+        </th>
+      </Tooltip>
+    );
+  }
+}
+HeadSortableCell.contextType = TableContext;
 
 // body section
 // contains actual data
@@ -718,34 +867,37 @@ Body.contextType = TableContext;
 class BodyRow extends Component {
   // display component
   render() {
-    const cells = this.context.headFields.map((field, index) => {
-      if (typeof this.context.headContents[index].type === 'function') {
-        return (
-          <BodyCheckboxCell
-            key={index}
-            datum={this.props.datum}
-            field={field}
-            content={this.context.headContents[index]}
-            checked={this.props.datum[field] ? true : false}
-            style={this.context.bodyStyles[index]}
-            className={this.context.bodyClasses[index]}
-            tooltip={this.context.bodyTooltips[index]}
-          />
-        );
-      } else {
-        return (
-          <BodyCell
-            key={index}
-            datum={this.props.datum}
-            field={field}
-            value={this.context.bodyValues[index]}
-            fullValue={this.context.bodyFullValues[index]}
-            style={this.context.bodyStyles[index]}
-            className={this.context.bodyClasses[index]}
-            tooltip={this.context.bodyTooltips[index]}
-          />
-        );
-      }
+    const cells = this.context.fields.map((field, index) => {
+      const datum = this.props.datum;
+      const value = datum[field];
+
+      let content = this.context.bodyContents[index];
+      if (typeof content === 'function')
+        content = content(datum, field, value);
+      let style = this.context.bodyStyles[index];
+      if (typeof style === 'function')
+        style = style(datum, field, value);
+      let className = this.context.bodyClasses[index];
+      if (typeof className === 'function')
+        className = className(datum, field, value);
+      let tooltip = this.context.bodyTooltips[index];
+      if (typeof tooltip === 'function')
+        tooltip = tooltip(datum, field, value);
+
+      const props = {
+        key: index,
+        datum: datum,
+        field: field,
+        value: value,
+        content: content,
+        style: style,
+        className: className,
+        tooltip: tooltip
+      };
+      if (this.context.checkboxes[index])
+        return <BodyCheckboxCell {...props} />;
+      else
+        return <BodyCell {...props} />;
     });
     return <tr>{cells}</tr>;
   }
@@ -761,19 +913,46 @@ class BodyCheckboxCell extends Component {
 
     this.state = {};
     // temporary checked state for dragging
-    this.tempChecked = null;
+    this.state.tempChecked = null;
+    // track previous y of mouse
+    this.prevMouseY = 0;
 
     this.onCtrlClick = this.onCtrlClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
 
     window.addEventListener('mouseup', this.onMouseUp);
+
+    this.ref = React.createRef();
   }
 
   // when component unmounts
   componentWillUnmount() {
     window.removeEventListener('mouseup', this.onMouseUp);
+  }
+
+  // when component updates
+  // fires when receiving new mouse position from context
+  componentDidUpdate() {
+    // if this column is the column being dragged
+    if (
+      this.context.dragField === this.props.field &&
+      typeof this.context.dragValue === 'boolean'
+    ) {
+      // if mouse passes by button vertically
+      const bbox = this.ref.current.getBoundingClientRect();
+      if (
+        (this.prevMouseY < bbox.top && this.context.mouseY >= bbox.top) ||
+        (this.prevMouseY > bbox.bottom && this.context.mouseY <= bbox.bottom)
+      ) {
+        // add self to drag list and temp check
+        this.context.addToDragList(this.props.datum[rowIndexKey]);
+        this.setState({ tempChecked: this.context.dragValue });
+      }
+    }
+
+    // track previous y of mouse
+    this.prevMouseY = this.context.mouseY;
   }
 
   // on ctrl+click
@@ -783,21 +962,9 @@ class BodyCheckboxCell extends Component {
 
   // on mouse down over button
   onMouseDown() {
-    this.context.beginDrag(this.props.field, !this.props.checked);
+    this.context.beginDrag(this.props.field, !this.props.value);
     this.context.addToDragList(this.props.datum[rowIndexKey]);
-    this.setState({ tempChecked: !this.props.checked });
-  }
-
-  // on mouse move over button
-  onMouseMove() {
-    // if this column is the column being dragged, add self to drag list
-    if (
-      this.context.dragField === this.props.field &&
-      typeof this.context.dragValue === 'boolean'
-    ) {
-      this.context.addToDragList(this.props.datum[rowIndexKey]);
-      this.setState({ tempChecked: this.context.dragValue });
-    }
+    this.setState({ tempChecked: !this.props.value });
   }
 
   // on mouse up anywhere
@@ -808,26 +975,25 @@ class BodyCheckboxCell extends Component {
 
   // display component
   render() {
-    const style = propValOrFunc(this.props, 'style', 'datum', {});
-    const className = propValOrFunc(this.props, 'className', 'datum', '');
-    const tooltip = propValOrFunc(this.props, 'tooltip', 'datum', '');
-
     let checked;
     if (typeof this.state.tempChecked === 'boolean')
       checked = this.state.tempChecked;
     else
-      checked = this.props.checked;
+      checked = this.props.value;
 
     return (
-      <Tooltip text={tooltip}>
-        <td style={style} className={className}>
+      <Tooltip text={this.props.tooltip || ''}>
+        <td
+          style={this.props.style || {}}
+          className={this.props.className || ''}
+          ref={this.ref}
+        >
           <Button
             className={'table_button'}
             onCtrlClick={this.onCtrlClick}
             onMouseDown={this.onMouseDown}
-            onMouseMove={this.onMouseMove}
           >
-            <div data-checked={checked}>{this.props.content}</div>
+            <span data-checked={checked}>{this.props.content || ''}</span>
           </Button>
         </td>
       </Tooltip>
@@ -841,45 +1007,24 @@ BodyCheckboxCell.contextType = TableContext;
 class BodyCell extends Component {
   // display component
   render() {
-    const style = propValOrFunc(this.props, 'style', 'datum', {});
-    const className = propValOrFunc(this.props, 'className', 'datum', '');
-    const tooltip = propValOrFunc(this.props, 'tooltip', 'datum', '');
-    const value =
-      propValOrFunc(this.props, 'value', 'datum', '') ||
-      this.props.datum[this.props.field];
-    const fullValue =
-      propValOrFunc(this.props, 'fullValue', 'datum', '') ||
-      this.props.datum[this.props.field];
-
     return (
-      <Tooltip text={tooltip}>
+      <Tooltip text={this.props.tooltip || ''}>
         <td
-          style={style}
-          className={className}
+          style={this.props.style || {}}
+          className={this.props.className || ''}
           data-highlighted={
             this.props.datum[cellHighlightKey] === this.props.field
               ? 'true'
               : 'false'
           }
         >
-          <DynamicField value={value} fullValue={fullValue} />
+          {this.props.content || ''}
         </td>
       </Tooltip>
     );
   }
 }
 BodyCell.contextType = TableContext;
-
-// helper function to get value of prop, or value returned from prop function
-function propValOrFunc(props, prop, datum, blank) {
-  prop = props[prop];
-  datum = props[datum];
-
-  if (typeof prop === 'function')
-    return prop(datum) || blank;
-  else
-    return prop || blank;
-}
 
 // controls section
 // contains search, pagination, and more
@@ -961,6 +1106,11 @@ class PerPage extends Component {
 
   // display component
   render() {
+    const options = this.context.perPages.map((entry, index) => (
+      <option key={index} value={entry}>
+        {entry}
+      </option>
+    ));
     return (
       <div
         className='table_per_page'
@@ -973,13 +1123,7 @@ class PerPage extends Component {
               value={String(this.context.perPage)}
               onChange={this.onChange}
             >
-              <option value='5'>5</option>
-              <option value='10'>10</option>
-              <option value='25'>25</option>
-              <option value='50'>50</option>
-              <option value='100'>100</option>
-              <option value='500'>500</option>
-              <option value='1000'>1000</option>
+              {options}
             </select>
           </Tooltip>
           <FontAwesomeIcon icon={faListOl} className='fa-sm' />
