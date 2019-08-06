@@ -32,6 +32,32 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 // styles from global.css on het.io
+// //////////////////////////////////////////////////
+// INPUT PROPS
+// //////////////////////////////////////////////////
+// children - jsx
+// children react components to put inside the button
+// onClick - function
+// called when button is clicked
+// onCtrlClick - function
+// called when button is clicked and ctrl button is held
+// onShiftClick - function
+// called when button is clicked and shift button is held
+// onMouseDown - function
+// called when mouse is pressed down on button
+// onMouseMove - function
+// called when mouse moves over button
+// onMouseUp - function
+// called when mouse is released on button
+// className - string
+// the className to apply to the button
+// tooltipText - string
+// text to display in tooltip when button is hovered
+// disabled - boolean
+// the data-disabled attribute value to be applied to the button
+// //////////////////////////////////////////////////
+// COMPONENT
+// //////////////////////////////////////////////////
 // button component
 var Button =
 /*#__PURE__*/
@@ -98,7 +124,21 @@ function (_Component) {
   }]);
 
   return Button;
-}(_react.Component); // icon button component
+}(_react.Component); // //////////////////////////////////////////////////
+// INPUT PROPS
+// //////////////////////////////////////////////////
+// same as Button above, and...
+// text - string
+// text to display in the button
+// icon - FontAwesomeIcon
+// the font awesome icon object from '@fortawesome/free-solid-svg-icons' to
+// display next to the text
+// checked - boolean
+// the data-checked attribute value to be applied to the button
+// //////////////////////////////////////////////////
+// COMPONENT
+// //////////////////////////////////////////////////
+// icon button component
 // link colored button with text and icon to right
 // icon gets the attribute data-checked to allow desired CSS styling
 

@@ -55,13 +55,14 @@ function (_Component) {
     _this.state = {};
     _this.state.data = []; // generate random dummy table data
 
-    for (var n = 0; n < 4321; n++) {
+    for (var n = 0; n < 321; n++) {
       _this.state.data.push({
         checked: Math.random() > 0.75,
         text: (Math.random() > 0.5 ? 'Red' : 'Green') + (Math.random() > 0.5 ? 'Apple' : 'Grape') + String(1 + Math.floor(Math.random() * 99)),
         smallNumber: Math.pow(Math.random(), 10),
         bigNumber: Math.floor(Math.random() * 100000),
-        fruit: (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇')
+        fruit: (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇'),
+        hiddenField: Math.random() > 0.5 ? 'Cat' : 'Dog'
       });
     }
 
@@ -103,6 +104,10 @@ function (_Component) {
         return datum.checked;
       }).length, " starred"), _react.default.createElement(_table.Table, {
         data: this.state.data,
+        fields: ['checked', 'text', 'smallNumber', 'bigNumber', 'fruit'],
+        checkboxes: [true],
+        sortables: [false, true, true, true, true],
+        searchAllFields: true,
         sortFunction: function sortFunction(field) {
           // sort by number of apples
           if (field === 'fruit') {
@@ -140,26 +145,40 @@ function (_Component) {
         }],
         topClasses: ['small', 'small', 'small'],
         topColspans: [1, 1, 2, 1],
-        headClasses: [null, 'small left', 'small', 'small', 'small'],
-        headFields: ['checked', 'text', 'smallNumber', 'bigNumber', 'fruit'],
-        headTooltips: ['Starred', 'Text field', 'Small number field', 'Big number field', 'Sort by number of apples'],
         headContents: [_react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
           className: "fa-xs",
           icon: _freeSolidSvgIcons.faStar
-        }), 'Text', 'Small Number', 'Big Number', 'Fruit'],
-        bodyValues: [null, null, function (datum) {
-          return (0, _format.toExponential)(datum.smallNumber);
-        }, function (datum) {
-          return (0, _format.toComma)(datum.bigNumber);
+        }), 'Text', _react.default.createElement(_react.default.Fragment, null, "Small", _react.default.createElement("br", null), "Number"), _react.default.createElement(_react.default.Fragment, null, "Big", _react.default.createElement("br", null), "Number"), 'Fruit'],
+        headClasses: ['center', 'small left', 'small center', 'small center', 'small center'],
+        headTooltips: ['Starred', 'Text field', 'Small number field', 'Big number field', 'Sort by number of apples'],
+        bodyContents: [_react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
+          className: "fa-xs",
+          icon: _freeSolidSvgIcons.faStar
+        }), function (datum, field, value) {
+          return _react.default.createElement(_dynamicField.DynamicField, {
+            value: value
+          });
+        }, function (datum, field, value) {
+          return _react.default.createElement(_dynamicField.DynamicField, {
+            value: (0, _format.toExponential)(value),
+            fullValue: value
+          });
+        }, function (datum, field, value) {
+          return _react.default.createElement(_dynamicField.DynamicField, {
+            value: (0, _format.toComma)(value),
+            fullValue: value
+          });
+        }, function (datum, field, value) {
+          return value;
         }],
-        bodyStyles: [null, null, function (datum) {
+        bodyStyles: [null, null, function (datum, field, value) {
           return {
-            background: (0, _format.toGradient)(datum.smallNumber)
+            background: (0, _format.toGradient)(value)
           };
         }],
-        bodyClasses: [null, 'left'],
-        bodyTooltips: [null, function (datum) {
-          return datum.text + ' is my username';
+        bodyClasses: ['center', 'left', 'center', 'center', 'center'],
+        bodyTooltips: [null, function (datum, field, value) {
+          return value + ' is my username';
         }]
       }));
     }

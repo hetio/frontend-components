@@ -29,6 +29,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
+// //////////////////////////////////////////////////
+// INPUT PROPS
+// //////////////////////////////////////////////////
+// value - jsx
+// the "normal" value to display when the field isn't focused
+// fullValue - jsx
+// the "full" value to display when the field is focused
+// className - string
+// the className to apply to the field
+// //////////////////////////////////////////////////
+// COMPONENT
+// //////////////////////////////////////////////////
 // expandable textbox-like component, similar to excel spreadsheet cell
 // when focused, field expands and prop "fullValue" displayed,
 // otherwise, prop "value" displayed (often "fullValue" rounded off)

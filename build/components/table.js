@@ -15,8 +15,6 @@ var _buttons = require("./buttons.js");
 
 var _tooltip = require("./tooltip.js");
 
-var _dynamicField = require("./dynamic-field.js");
-
 var _object = require("../util/object.js");
 
 require("./table.css");
@@ -52,15 +50,83 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var rowIndexKey = '_rowIndex';
-var cellHighlightKey = '_cellHighlight'; // generic table component
-// contains three sections: top (row above head), head, and body
-// contents, styles, and classes can be specified for all sections
-// tooltips can be specified for head and body
-// colspans can be specified for top
-// custom sort function can be specified
-// supports img or font-awesome checkboxes
-// checkboxes get the attribute data-checked to allow desired CSS styling
-// sort arrows get the attribute data-disabled to allow desired CSS styling
+var cellHighlightKey = '_cellHighlight'; // //////////////////////////////////////////////////
+// INPUT PROPS
+// //////////////////////////////////////////////////
+// data - [{}]
+// the data structure that will populate the table in the format:
+// [ ... {pet: 'cat', num: 42, ... } , {pet: 'dog', num: 3.14, ... } ... ]
+// fields - [string]
+// keys from 'data' that will represent and determine the order of the columns
+// containerClass - string
+// the className to be applied to the div surrounding the <table> element
+// onChange - function
+// called when a checkbox or group of checkboxes change state
+// called with the arguments (newData)
+// sortFunction - function
+// called when data is sorted. called with the arguments (field)
+// should return a comparison method for the javascript sort() function
+// if it doesn't return a function, a default comparison method is used
+// sortables - [boolean]
+// whether or not to allow each column to be sortable
+// checkboxes - [boolean]
+// whether or not to treat each column as a checkbox field
+// defaultSortField - string
+// field to sort table by by default
+// defaultSortUp - boolean
+// whether or not to sort default field up by default
+// defaultPerPage - number|string
+// amount of row entries to show by default
+// when per page value is string, all rows are shown
+// perPages - [number|string]
+// the options to provide for the per page dropdown
+// dontResort - boolean
+// whether or not to "preserve" row order when the input data changed but the
+// number of rows didn't
+// searchAllFields - boolean
+// whether or not to search all the fields in the data object
+// if false or omitted, only the displayed fields/columns are searched
+// //////////////////////////////////////////////////
+// topContents - [jsx]
+// the text or other content to be displayed in the row above the head row
+// topStyles - [{}]
+// the style object to apply to each column of topContents
+// topClasses - [string]
+// the className to apply to each column of topContents
+// topColspans - [number]
+// the html colSpan attribute to apply to each column of topContents
+// headContents - [jsx]
+// the text or other content to be displayed in the head row
+// headStyles - [{}]
+// the style object to apply to each column
+// headClasses - [string]
+// the className to apply to each column
+// headTooltips- [string]
+// the tooltip text to display when hovering over each head cell
+// //////////////////////////////////////////////////
+// NOTE: The body input props below all accept either a static value or a
+// function will be called with the arguments (datum, field, value) that
+// should return a static value of the appropriate type.
+// bodyContents - [jsx|function]
+// the text or other content to be displayed for each row of data
+// bodyStyles - [{}|function]
+// the style object to apply to each column
+// bodyClasses - [string|function]
+// the className to apply to each column
+// bodyTooltips - [string|function]
+// the tooltip text to display when hovering over each body cell
+// //////////////////////////////////////////////////
+// NOTES
+// //////////////////////////////////////////////////
+// Certain items get html data- attributes to allow CSS styling:
+// sort arrows - data-disabled
+// checkboxes - data-checked
+// search highlighted cells - data-highlighted
+// page arrow buttons - data-disabled
+// //////////////////////////////////////////////////
+// COMPONENT
+// //////////////////////////////////////////////////
+// generic table component
 
 var Table =
 /*#__PURE__*/
@@ -92,6 +158,17 @@ function (_Component) {
       if (event.key === 'ArrowRight') {
         if (event.ctrlKey) _this.setPage(_this.state.pages);else _this.setPage(_this.state.page + 1);
       }
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "onMouseMove", function (event) {
+      _this.setState({
+        mouseX: event.clientX,
+        mouseY: event.clientY
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "onMouseUp", function (event) {
+      _this.endDrag(event);
     });
 
     _defineProperty(_assertThisInitialized(_this), "setData", function (data) {
@@ -232,12 +309,13 @@ function (_Component) {
       data = (0, _object.copyObject)(data);
       if (!_this.state.searchString) return data;
       return data.filter(function (datum) {
+        var searchFields = _this.props.searchAllFields ? Object.keys(datum) : _this.props.fields;
         var _iteratorNormalCompletion4 = true;
         var _didIteratorError4 = false;
         var _iteratorError4 = undefined;
 
         try {
-          for (var _iterator4 = _this.props.headFields[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          for (var _iterator4 = searchFields[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
             var field = _step4.value;
 
             if (String(JSON.stringify(datum[field])).toLowerCase().includes(_this.state.searchString.toLowerCase())) {
@@ -266,8 +344,14 @@ function (_Component) {
 
     _defineProperty(_assertThisInitialized(_this), "paginateData", function (data) {
       data = (0, _object.copyObject)(data);
-      var start = (_this.state.page - 1) * _this.state.perPage;
-      var end = start + _this.state.perPage;
+      var start = 0;
+      var end = data.length;
+
+      if (typeof _this.state.perPage === 'number') {
+        start = (_this.state.page - 1) * _this.state.perPage;
+        end = start + _this.state.perPage;
+      }
+
       return data.slice(start, end);
     });
 
@@ -454,8 +538,10 @@ function (_Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "addToDragList", function (rowIndex) {
-      if (!_this.state.dragList.includes(rowIndex)) _this.setState({
-        dragList: [].concat(_toConsumableArray(_this.state.dragList), [rowIndex])
+      if (!_this.state.dragList.includes(rowIndex)) _this.setState(function (state) {
+        return {
+          dragList: [].concat(_toConsumableArray(state.dragList), [rowIndex])
+        };
       });
     });
 
@@ -530,8 +616,9 @@ function (_Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "setPerPage", function (value) {
-      value = Number(value);
-      if (Number.isNaN(value)) value = 10;
+      if (typeof value !== 'number') {
+        if (Number.isNaN(Number(value))) value = 'all';else value = Number(value);
+      }
 
       _this.setState({
         perPage: value,
@@ -540,12 +627,11 @@ function (_Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "calcPages", function (data, perPage) {
-      return Math.ceil(data.length / perPage);
+      if (typeof perPage === 'number') return Math.ceil(data.length / perPage);else return 1;
     });
 
     _this.ref = _react.default.createRef();
-    _this.state = {};
-    _this.state.hovered = false; // input data at different stages in processing chain
+    _this.state = {}; // input data at different stages in processing chain
 
     _this.state.indexedData = [];
     _this.state.sortedData = [];
@@ -554,19 +640,22 @@ function (_Component) {
 
     _this.state.data = []; // table control vars
 
+    _this.state.hovered = false;
     _this.state.sortField = _this.props.defaultSortField || '';
     _this.state.sortUp = _this.props.defaultSortUp || false;
     _this.state.searchString = '';
     _this.state.searchResults = 0;
     _this.state.page = 1;
     _this.state.pages = 1;
-    _this.state.perPage = 10;
+    _this.state.perPages = _this.props.perPages || [5, 10, 15, 25, 50, 100, 500, 1000, 'all'];
+    _this.state.perPage = _this.props.defaultPerPage || 10;
     _this.state.dragField = null;
     _this.state.dragValue = null;
     _this.state.dragList = []; // end checkbox drag when mouse released anywhere
 
-    window.addEventListener('mouseup', _this.endDrag);
+    window.addEventListener('mousemove', _this.onMouseMove);
     window.addEventListener('keydown', _this.onKeyDown);
+    window.addEventListener('mouseup', _this.onMouseUp);
     return _this;
   } // when component mounts
 
@@ -590,12 +679,12 @@ function (_Component) {
     value: function componentDidUpdate(prevProps, prevState) {
       var newState = {}; // when input data changes
 
-      if (!(0, _object.compareObjects)(this.props.data, prevProps.data) || !(0, _object.compareObjects)(this.props.headFields, prevProps.headFields)) {
+      if (!(0, _object.compareObjects)(this.props.data, prevProps.data) || !(0, _object.compareObjects)(this.props.fields, prevProps.fields)) {
         newState.indexedData = this.indexData(this.props.data); // if number of input data rows hasn't changed, assume none were added,
         // deleted, or reordered, and preserve previous sorting
         // assumes prevState.indexedData and newState.indexedData in same order
 
-        if (this.props.data.length === prevProps.data.length) {
+        if (this.props.dontResort && this.props.data.length === prevProps.data.length) {
           newState.sortedData = this.preserveSortData(prevState.sortedData, newState.indexedData);
         } else newState.sortedData = this.sortData(newState.indexedData);
 
@@ -643,9 +732,12 @@ function (_Component) {
 
       return _react.default.createElement(TableContext.Provider, {
         value: {
+          // give props to TableContext that children components may need
+          // mouse
           setHovered: this.setHovered,
-          data: this.state.data,
-          // checkbox props
+          mouseX: this.state.mouseX,
+          mouseY: this.state.mouseY,
+          // checkbox
           dragField: this.state.dragField,
           dragValue: this.state.dragValue,
           // checkbox functions
@@ -656,41 +748,41 @@ function (_Component) {
           beginDrag: this.beginDrag,
           addToDragList: this.addToDragList,
           resetDrag: this.resetDrag,
-          // sort props
+          // sort
           sortField: this.state.sortField,
           sortUp: this.state.sortUp,
-          // sort functions
           changeSort: this.changeSort,
-          // search props
+          // search
           searchString: this.state.searchString,
           searchResults: this.state.searchResults,
-          // search/filter functions
           onSearch: this.onSearch,
-          // page props
+          // page
           page: this.state.page,
           pages: this.state.pages,
           perPage: this.state.perPage,
-          // page functions
           setPage: this.setPage,
           setPerPage: this.setPerPage,
-          // table input
+          // component input props
+          data: this.state.data,
+          fields: this.props.fields || [],
+          checkboxes: this.props.checkboxes || [],
+          sortables: this.props.sortables || [],
+          perPages: this.state.perPages,
           topContents: this.props.topContents || [],
           topStyles: this.props.topStyles || [],
           topClasses: this.props.topClasses || [],
           topColspans: this.props.topColspans || [],
           headContents: this.props.headContents || [],
-          headFields: this.props.headFields || [],
           headStyles: this.props.headStyles || [],
           headClasses: this.props.headClasses || [],
           headTooltips: this.props.headTooltips || [],
-          bodyValues: this.props.bodyValues || [],
-          bodyFullValues: this.props.bodyFullValues || [],
+          bodyContents: this.props.bodyContents || [],
           bodyStyles: this.props.bodyStyles || [],
           bodyClasses: this.props.bodyClasses || [],
           bodyTooltips: this.props.bodyTooltips || []
         }
       }, _react.default.createElement("div", {
-        className: this.props.containerClass,
+        className: this.props.containerClass || '',
         ref: this.ref,
         onMouseEnter: function onMouseEnter() {
           return _this2.setHovered(true);
@@ -794,26 +886,16 @@ function (_Component4) {
     value: function render() {
       var _this4 = this;
 
-      var cells = this.context.headContents.map(function (content, index) {
-        if (typeof content.type === 'function') {
-          return _react.default.createElement(HeadCheckboxCell, {
-            key: index,
-            content: content,
-            field: _this4.context.headFields[index],
-            style: _this4.context.headStyles[index],
-            className: _this4.context.headClasses[index],
-            tooltip: _this4.context.headTooltips[index]
-          });
-        } else {
-          return _react.default.createElement(HeadCell, {
-            key: index,
-            content: content,
-            field: _this4.context.headFields[index],
-            style: _this4.context.headStyles[index],
-            className: _this4.context.headClasses[index],
-            tooltip: _this4.context.headTooltips[index]
-          });
-        }
+      var cells = this.context.fields.map(function (field, index) {
+        var props = {
+          key: index,
+          field: field,
+          content: _this4.context.headContents[index],
+          style: _this4.context.headStyles[index],
+          className: _this4.context.headClasses[index],
+          tooltip: _this4.context.headTooltips[index]
+        };
+        if (_this4.context.checkboxes[index] && _this4.context.headContents[index]) return _react.default.createElement(HeadCheckboxCell, props);else if (_this4.context.sortables[index]) return _react.default.createElement(HeadSortableCell, props);else return _react.default.createElement(HeadCell, props);
       });
       if (cells.length > 0) return _react.default.createElement("tr", null, cells);else return _react.default.createElement(_react.default.Fragment, null);
     }
@@ -854,28 +936,28 @@ function (_Component5) {
         }
       }, _react.default.createElement("span", {
         "data-checked": this.context.allChecked(this.props.field)
-      }, this.props.content))));
+      }, this.props.content || ''))));
     }
   }]);
 
   return HeadCheckboxCell;
 }(_react.Component);
 
-HeadCheckboxCell.contextType = TableContext; // head cell
+HeadCheckboxCell.contextType = TableContext; // head sortable cell
 // contains sort button
 
-var HeadCell =
+var HeadSortableCell =
 /*#__PURE__*/
 function (_Component6) {
-  _inherits(HeadCell, _Component6);
+  _inherits(HeadSortableCell, _Component6);
 
-  function HeadCell() {
-    _classCallCheck(this, HeadCell);
+  function HeadSortableCell() {
+    _classCallCheck(this, HeadSortableCell);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(HeadCell).apply(this, arguments));
+    return _possibleConstructorReturn(this, _getPrototypeOf(HeadSortableCell).apply(this, arguments));
   }
 
-  _createClass(HeadCell, [{
+  _createClass(HeadSortableCell, [{
     key: "render",
     // display component
     value: function render() {
@@ -888,12 +970,12 @@ function (_Component6) {
       }, _react.default.createElement("th", {
         style: this.props.style || {},
         className: this.props.className || ''
-      }, this.props.content && _react.default.createElement(_buttons.Button, {
+      }, _react.default.createElement(_buttons.Button, {
         className: "table_button",
         onClick: function onClick() {
           return _this6.context.changeSort(_this6.props.field);
         }
-      }, this.props.content, _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
+      }, this.props.content || '', _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
         icon: sortUp ? _freeSolidSvgIcons.faSortAmountUp : _freeSolidSvgIcons.faSortAmountDownAlt,
         className: "fa-lg table_sort_icon",
         "data-disabled": this.props.field !== this.context.sortField
@@ -901,16 +983,45 @@ function (_Component6) {
     }
   }]);
 
+  return HeadSortableCell;
+}(_react.Component);
+
+HeadSortableCell.contextType = TableContext; // plain head cell
+
+var HeadCell =
+/*#__PURE__*/
+function (_Component7) {
+  _inherits(HeadCell, _Component7);
+
+  function HeadCell() {
+    _classCallCheck(this, HeadCell);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(HeadCell).apply(this, arguments));
+  }
+
+  _createClass(HeadCell, [{
+    key: "render",
+    // display component
+    value: function render() {
+      return _react.default.createElement(_tooltip.Tooltip, {
+        text: this.props.tooltip || ''
+      }, _react.default.createElement("th", {
+        style: this.props.style || {},
+        className: this.props.className || ''
+      }, this.props.content || ''));
+    }
+  }]);
+
   return HeadCell;
 }(_react.Component);
 
-HeadCell.contextType = TableContext; // body section
+HeadSortableCell.contextType = TableContext; // body section
 // contains actual data
 
 var Body =
 /*#__PURE__*/
-function (_Component7) {
-  _inherits(Body, _Component7);
+function (_Component8) {
+  _inherits(Body, _Component8);
 
   function Body() {
     _classCallCheck(this, Body);
@@ -940,8 +1051,8 @@ Body.contextType = TableContext; // one row in body
 
 var BodyRow =
 /*#__PURE__*/
-function (_Component8) {
-  _inherits(BodyRow, _Component8);
+function (_Component9) {
+  _inherits(BodyRow, _Component9);
 
   function BodyRow() {
     _classCallCheck(this, BodyRow);
@@ -955,30 +1066,28 @@ function (_Component8) {
     value: function render() {
       var _this7 = this;
 
-      var cells = this.context.headFields.map(function (field, index) {
-        if (typeof _this7.context.headContents[index].type === 'function') {
-          return _react.default.createElement(BodyCheckboxCell, {
-            key: index,
-            datum: _this7.props.datum,
-            field: field,
-            content: _this7.context.headContents[index],
-            checked: _this7.props.datum[field] ? true : false,
-            style: _this7.context.bodyStyles[index],
-            className: _this7.context.bodyClasses[index],
-            tooltip: _this7.context.bodyTooltips[index]
-          });
-        } else {
-          return _react.default.createElement(BodyCell, {
-            key: index,
-            datum: _this7.props.datum,
-            field: field,
-            value: _this7.context.bodyValues[index],
-            fullValue: _this7.context.bodyFullValues[index],
-            style: _this7.context.bodyStyles[index],
-            className: _this7.context.bodyClasses[index],
-            tooltip: _this7.context.bodyTooltips[index]
-          });
-        }
+      var cells = this.context.fields.map(function (field, index) {
+        var datum = _this7.props.datum;
+        var value = datum[field];
+        var content = _this7.context.bodyContents[index];
+        if (typeof content === 'function') content = content(datum, field, value);
+        var style = _this7.context.bodyStyles[index];
+        if (typeof style === 'function') style = style(datum, field, value);
+        var className = _this7.context.bodyClasses[index];
+        if (typeof className === 'function') className = className(datum, field, value);
+        var tooltip = _this7.context.bodyTooltips[index];
+        if (typeof tooltip === 'function') tooltip = tooltip(datum, field, value);
+        var props = {
+          key: index,
+          datum: datum,
+          field: field,
+          value: value,
+          content: content,
+          style: style,
+          className: className,
+          tooltip: tooltip
+        };
+        if (_this7.context.checkboxes[index]) return _react.default.createElement(BodyCheckboxCell, props);else return _react.default.createElement(BodyCell, props);
       });
       return _react.default.createElement("tr", null, cells);
     }
@@ -992,8 +1101,8 @@ BodyRow.contextType = TableContext; // body checkbox cell
 
 var BodyCheckboxCell =
 /*#__PURE__*/
-function (_Component9) {
-  _inherits(BodyCheckboxCell, _Component9);
+function (_Component10) {
+  _inherits(BodyCheckboxCell, _Component10);
 
   // initialize component
   function BodyCheckboxCell() {
@@ -1004,12 +1113,14 @@ function (_Component9) {
     _this8 = _possibleConstructorReturn(this, _getPrototypeOf(BodyCheckboxCell).call(this));
     _this8.state = {}; // temporary checked state for dragging
 
-    _this8.tempChecked = null;
+    _this8.state.tempChecked = null; // track previous y of mouse
+
+    _this8.prevMouseY = 0;
     _this8.onCtrlClick = _this8.onCtrlClick.bind(_assertThisInitialized(_this8));
     _this8.onMouseDown = _this8.onMouseDown.bind(_assertThisInitialized(_this8));
-    _this8.onMouseMove = _this8.onMouseMove.bind(_assertThisInitialized(_this8));
     _this8.onMouseUp = _this8.onMouseUp.bind(_assertThisInitialized(_this8));
     window.addEventListener('mouseup', _this8.onMouseUp);
+    _this8.ref = _react.default.createRef();
     return _this8;
   } // when component unmounts
 
@@ -1018,6 +1129,28 @@ function (_Component9) {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       window.removeEventListener('mouseup', this.onMouseUp);
+    } // when component updates
+    // fires when receiving new mouse position from context
+
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate() {
+      // if this column is the column being dragged
+      if (this.context.dragField === this.props.field && typeof this.context.dragValue === 'boolean') {
+        // if mouse passes by button vertically
+        var bbox = this.ref.current.getBoundingClientRect();
+
+        if (this.prevMouseY < bbox.top && this.context.mouseY >= bbox.top || this.prevMouseY > bbox.bottom && this.context.mouseY <= bbox.bottom) {
+          // add self to drag list and temp check
+          this.context.addToDragList(this.props.datum[rowIndexKey]);
+          this.setState({
+            tempChecked: this.context.dragValue
+          });
+        }
+      } // track previous y of mouse
+
+
+      this.prevMouseY = this.context.mouseY;
     } // on ctrl+click
 
   }, {
@@ -1029,23 +1162,11 @@ function (_Component9) {
   }, {
     key: "onMouseDown",
     value: function onMouseDown() {
-      this.context.beginDrag(this.props.field, !this.props.checked);
+      this.context.beginDrag(this.props.field, !this.props.value);
       this.context.addToDragList(this.props.datum[rowIndexKey]);
       this.setState({
-        tempChecked: !this.props.checked
+        tempChecked: !this.props.value
       });
-    } // on mouse move over button
-
-  }, {
-    key: "onMouseMove",
-    value: function onMouseMove() {
-      // if this column is the column being dragged, add self to drag list
-      if (this.context.dragField === this.props.field && typeof this.context.dragValue === 'boolean') {
-        this.context.addToDragList(this.props.datum[rowIndexKey]);
-        this.setState({
-          tempChecked: this.context.dragValue
-        });
-      }
     } // on mouse up anywhere
 
   }, {
@@ -1060,24 +1181,21 @@ function (_Component9) {
   }, {
     key: "render",
     value: function render() {
-      var style = propValOrFunc(this.props, 'style', 'datum', {});
-      var className = propValOrFunc(this.props, 'className', 'datum', '');
-      var tooltip = propValOrFunc(this.props, 'tooltip', 'datum', '');
       var checked;
-      if (typeof this.state.tempChecked === 'boolean') checked = this.state.tempChecked;else checked = this.props.checked;
+      if (typeof this.state.tempChecked === 'boolean') checked = this.state.tempChecked;else checked = this.props.value;
       return _react.default.createElement(_tooltip.Tooltip, {
-        text: tooltip
+        text: this.props.tooltip || ''
       }, _react.default.createElement("td", {
-        style: style,
-        className: className
+        style: this.props.style || {},
+        className: this.props.className || '',
+        ref: this.ref
       }, _react.default.createElement(_buttons.Button, {
         className: 'table_button',
         onCtrlClick: this.onCtrlClick,
-        onMouseDown: this.onMouseDown,
-        onMouseMove: this.onMouseMove
-      }, _react.default.createElement("div", {
+        onMouseDown: this.onMouseDown
+      }, _react.default.createElement("span", {
         "data-checked": checked
-      }, this.props.content))));
+      }, this.props.content || ''))));
     }
   }]);
 
@@ -1089,8 +1207,8 @@ BodyCheckboxCell.contextType = TableContext; // body cell
 
 var BodyCell =
 /*#__PURE__*/
-function (_Component10) {
-  _inherits(BodyCell, _Component10);
+function (_Component11) {
+  _inherits(BodyCell, _Component11);
 
   function BodyCell() {
     _classCallCheck(this, BodyCell);
@@ -1102,41 +1220,26 @@ function (_Component10) {
     key: "render",
     // display component
     value: function render() {
-      var style = propValOrFunc(this.props, 'style', 'datum', {});
-      var className = propValOrFunc(this.props, 'className', 'datum', '');
-      var tooltip = propValOrFunc(this.props, 'tooltip', 'datum', '');
-      var value = propValOrFunc(this.props, 'value', 'datum', '') || this.props.datum[this.props.field];
-      var fullValue = propValOrFunc(this.props, 'fullValue', 'datum', '') || this.props.datum[this.props.field];
       return _react.default.createElement(_tooltip.Tooltip, {
-        text: tooltip
+        text: this.props.tooltip || ''
       }, _react.default.createElement("td", {
-        style: style,
-        className: className,
+        style: this.props.style || {},
+        className: this.props.className || '',
         "data-highlighted": this.props.datum[cellHighlightKey] === this.props.field ? 'true' : 'false'
-      }, _react.default.createElement(_dynamicField.DynamicField, {
-        value: value,
-        fullValue: fullValue
-      })));
+      }, this.props.content || ''));
     }
   }]);
 
   return BodyCell;
 }(_react.Component);
 
-BodyCell.contextType = TableContext; // helper function to get value of prop, or value returned from prop function
-
-function propValOrFunc(props, prop, datum, blank) {
-  prop = props[prop];
-  datum = props[datum];
-  if (typeof prop === 'function') return prop(datum) || blank;else return prop || blank;
-} // controls section
+BodyCell.contextType = TableContext; // controls section
 // contains search, pagination, and more
-
 
 var Controls =
 /*#__PURE__*/
-function (_Component11) {
-  _inherits(Controls, _Component11);
+function (_Component12) {
+  _inherits(Controls, _Component12);
 
   function Controls() {
     _classCallCheck(this, Controls);
@@ -1161,8 +1264,8 @@ function (_Component11) {
 
 var Nav =
 /*#__PURE__*/
-function (_Component12) {
-  _inherits(Nav, _Component12);
+function (_Component13) {
+  _inherits(Nav, _Component13);
 
   function Nav() {
     _classCallCheck(this, Nav);
@@ -1238,8 +1341,8 @@ Nav.contextType = TableContext; // per page component
 
 var PerPage =
 /*#__PURE__*/
-function (_Component13) {
-  _inherits(PerPage, _Component13);
+function (_Component14) {
+  _inherits(PerPage, _Component14);
 
   function PerPage() {
     var _getPrototypeOf2;
@@ -1267,6 +1370,12 @@ function (_Component13) {
     value: function render() {
       var _this11 = this;
 
+      var options = this.context.perPages.map(function (entry, index) {
+        return _react.default.createElement("option", {
+          key: index,
+          value: entry
+        }, entry);
+      });
       return _react.default.createElement("div", {
         className: "table_per_page",
         onMouseEnter: function onMouseEnter() {
@@ -1282,21 +1391,7 @@ function (_Component13) {
       }, _react.default.createElement("select", {
         value: String(this.context.perPage),
         onChange: this.onChange
-      }, _react.default.createElement("option", {
-        value: "5"
-      }, "5"), _react.default.createElement("option", {
-        value: "10"
-      }, "10"), _react.default.createElement("option", {
-        value: "25"
-      }, "25"), _react.default.createElement("option", {
-        value: "50"
-      }, "50"), _react.default.createElement("option", {
-        value: "100"
-      }, "100"), _react.default.createElement("option", {
-        value: "500"
-      }, "500"), _react.default.createElement("option", {
-        value: "1000"
-      }, "1000"))), _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
+      }, options)), _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
         icon: _freeSolidSvgIcons.faListOl,
         className: "fa-sm"
       })));
@@ -1310,8 +1405,8 @@ PerPage.contextType = TableContext; // search textbox component
 
 var Search =
 /*#__PURE__*/
-function (_Component14) {
-  _inherits(Search, _Component14);
+function (_Component15) {
+  _inherits(Search, _Component15);
 
   // intialize component
   function Search() {

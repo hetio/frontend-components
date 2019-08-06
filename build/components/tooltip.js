@@ -34,7 +34,15 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 // open delay in ms
-var delay = 500; // tooltip (helper text) popup component
+var delay = 500; // //////////////////////////////////////////////////
+// INPUT PROPS
+// //////////////////////////////////////////////////
+// text - string
+// text to display in the tooltip
+// //////////////////////////////////////////////////
+// COMPONENT
+// //////////////////////////////////////////////////
+// tooltip (helper text) popup component
 
 var Tooltip =
 /*#__PURE__*/
