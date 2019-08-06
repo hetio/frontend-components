@@ -937,7 +937,7 @@ function (_Component5) {
           return _this5.context.toggleAll(_this5.props.field);
         }
       }, _react.default.createElement("span", {
-        "data-checked": this.context.allChecked(this.props.field)
+        "data-checked": this.context.allChecked(this.props.field) ? true : false
       }, this.props.content || ''))));
     }
   }]);
@@ -1196,7 +1196,7 @@ function (_Component10) {
         onCtrlClick: this.onCtrlClick,
         onMouseDown: this.onMouseDown
       }, _react.default.createElement("span", {
-        "data-checked": checked
+        "data-checked": checked ? true : false
       }, this.props.content || ''))));
     }
   }]);
@@ -1227,7 +1227,7 @@ function (_Component11) {
       }, _react.default.createElement("td", {
         style: this.props.style || {},
         className: this.props.className || '',
-        "data-highlighted": this.props.datum[cellHighlightKey] === this.props.field ? 'true' : 'false'
+        "data-highlighted": this.props.datum[cellHighlightKey] === this.props.field ? true : false
       }, this.props.content || ''));
     }
   }]);
