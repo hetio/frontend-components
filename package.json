@@ -19,8 +19,8 @@
     "react-scripts": "3.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "rm -rf build && mkdir build && npx babel src --out-dir build --copy-files",
+    "start": "cp ./src/index.development.js ./src/index.js && react-scripts start",
+    "build": "cp ./src/index.production.js ./src/index.js && rm -rf build && mkdir build && npx babel src --out-dir build --copy-files",
     "test": "react-scripts build",
     "eject": "react-scripts eject"
   },

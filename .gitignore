@@ -10,6 +10,8 @@
 
 # production
 /build
+# don't include temp index file
+/src/index.js
 
 # misc
 .DS_Store
