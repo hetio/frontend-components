@@ -35,6 +35,9 @@ const cellHighlightKey = '_cellHighlight';
 // containerClass - string
 // the className to be applied to the div surrounding the <table> element
 
+// className - string
+// the className to be applied to the <table> element
+
 // onChange - function
 // called when a checkbox or group of checkboxes change state
 // called with the arguments (newData)
@@ -685,7 +688,7 @@ export class Table extends Component {
           onMouseEnter={() => this.setHovered(true)}
           onMouseLeave={() => this.setHovered(false)}
         >
-          <table className={this.props.className}>
+          <table className={this.props.className || ''}>
             <thead>
               <Top />
               <Head />
