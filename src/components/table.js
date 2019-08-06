@@ -790,7 +790,11 @@ class HeadCheckboxCell extends Component {
             className='table_button'
             onClick={() => this.context.toggleAll(this.props.field)}
           >
-            <span data-checked={this.context.allChecked(this.props.field)}>
+            <span
+              data-checked={
+                this.context.allChecked(this.props.field) ? true : false
+              }
+            >
               {this.props.content || ''}
             </span>
           </Button>
@@ -996,7 +1000,9 @@ class BodyCheckboxCell extends Component {
             onCtrlClick={this.onCtrlClick}
             onMouseDown={this.onMouseDown}
           >
-            <span data-checked={checked}>{this.props.content || ''}</span>
+            <span data-checked={checked ? true : false}>
+              {this.props.content || ''}
+            </span>
           </Button>
         </td>
       </Tooltip>
@@ -1017,8 +1023,8 @@ class BodyCell extends Component {
           className={this.props.className || ''}
           data-highlighted={
             this.props.datum[cellHighlightKey] === this.props.field
-              ? 'true'
-              : 'false'
+              ? true
+              : false
           }
         >
           {this.props.content || ''}
