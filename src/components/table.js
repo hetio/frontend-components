@@ -365,10 +365,13 @@ export class Table extends Component {
   // compare function for sorting
   defaultSort = (a, b, key, sortUp) => {
     // if both are numbers, compare by values
-    if (typeof a[key] === 'number' && typeof b[key] === 'number') {
-      if (a[key] < b[key])
+    if (
+      (typeof a[key] === 'number' || !Number.isNaN(Number(a[key]))) &&
+      (typeof b[key] === 'number' || !Number.isNaN(Number(b[key])))
+    ) {
+      if (Number(a[key]) < Number(b[key]))
         return -1;
-      else if (a[key] > b[key])
+      else if (Number(a[key]) > Number(b[key]))
         return 1;
       else
         return 0;

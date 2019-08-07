@@ -29,7 +29,7 @@ export class TestBed extends Component {
           (Math.random() > 0.5 ? 'Red' : 'Green') +
           (Math.random() > 0.5 ? 'Apple' : 'Grape') +
           String(1 + Math.floor(Math.random() * 99)),
-        smallNumber: Math.pow(Math.random(), 10),
+        smallNumber: Math.random() > 0.05 ? Math.pow(Math.random(), 10) : 0,
         bigNumber: Math.floor(Math.random() * 100000),
         fruit:
           (Math.random() > 0.5 ? '🍎' : '🍇') +
