@@ -426,7 +426,7 @@ export class Table extends Component {
 
     return data.filter((datum) => {
       const searchFields = this.props.searchAllFields
-        ? Object.keys(datum)
+        ? this.props.fields.concat(Object.keys(datum))
         : this.props.fields;
       for (const field of searchFields) {
         if (
