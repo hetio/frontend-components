@@ -121,7 +121,10 @@ function (_Component) {
     value: function render() {
       var displayValue; // show full value if focused, or short value if not
 
-      if (this.state.focused) displayValue = this.props.fullValue || this.props.value;else displayValue = this.props.value; // if value just text, set "nowrap" to truncate with ellipsis
+      if (this.state.focused) {
+        if (this.props.fullValue !== undefined && this.props.fullValue !== null) displayValue = this.props.fullValue;else displayValue = this.props.value;
+      } else displayValue = this.props.value; // if value just text, set "nowrap" to truncate with ellipsis
+
 
       if (typeof displayValue === 'string') displayValue = _react.default.createElement("span", {
         className: "nowrap"

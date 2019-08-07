@@ -48,7 +48,7 @@ function toGradient(number, gradient) {
   }); // if provided number is outside range of gradient, return boundary color
 
   if (number < gradient[0][0]) return gradient[0][1];
-  if (number > gradient[gradient.length - 1][0]) return gradient[gradient.length][1]; // find gradient entry below and above provided number
+  if (number > gradient[gradient.length - 1][0]) return gradient[gradient.length - 1][1]; // find gradient entry below and above provided number
 
   var lowerIndex = 0;
   var upperIndex = gradient.length - 1;
