@@ -83,9 +83,12 @@ export class DynamicField extends Component {
     let displayValue;
 
     // show full value if focused, or short value if not
-    if (this.state.focused)
-      displayValue = this.props.fullValue || this.props.value;
-    else
+    if (this.state.focused) {
+      if (this.props.fullValue !== undefined && this.props.fullValue !== null)
+        displayValue = this.props.fullValue;
+      else
+        displayValue = this.props.value;
+    } else
       displayValue = this.props.value;
 
     // if value just text, set "nowrap" to truncate with ellipsis

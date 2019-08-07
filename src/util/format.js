@@ -53,7 +53,7 @@ export function toGradient(number, gradient) {
   if (number < gradient[0][0])
     return gradient[0][1];
   if (number > gradient[gradient.length - 1][0])
-    return gradient[gradient.length][1];
+    return gradient[gradient.length - 1][1];
 
   // find gradient entry below and above provided number
   let lowerIndex = 0;
