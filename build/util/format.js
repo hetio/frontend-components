@@ -10,6 +10,8 @@ exports.toGradient = toGradient;
 
 var _react = _interopRequireDefault(require("react"));
 
+var _color = _interopRequireDefault(require("color"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // get html of number in exponential form
@@ -33,60 +35,40 @@ function toComma(number) {
   if (typeof number !== 'number') return '-';
   return Number(number).toLocaleString();
 } // map number to css color based on specified gradient
-// gradient should be an array of rgba() CSS color strings
+// gradient should be in format [ ... , [number, 'rgba()'], ... ]
+// values between gradient steps are linearly interpolated
 
 
-function toGradient(number, min, max, gradient) {
+function toGradient(number, gradient) {
   // check inputs
-  if (typeof number !== 'number') return 'rgba(255, 255, 255, 0)';
-  if (!Array.isArray(gradient) || !gradient.length) gradient = ['rgba(255, 255, 255, 0)'];
-  if (typeof min !== 'number') min = 0;
-  if (typeof max !== 'number') max = 100;
+  if (typeof number !== 'number' || !Array.isArray(gradient) || !gradient.length) return 'rgba(255, 255, 255, 0)'; // sort gradient by number
 
-  if (min > max) {
-    var temp = max;
-    max = min;
-    min = temp;
-  }
+  gradient.sort(function (a, b) {
+    return a[0] - b[0];
+  }); // if provided number is outside range of gradient, return boundary color
 
-  if (number < min) return gradient[0];
-  if (number > max) return gradient[gradient.length - 1]; // get percent that number is through range
+  if (number < gradient[0][0]) return gradient[0][1];
+  if (number > gradient[gradient.length - 1][0]) return gradient[gradient.length][1]; // find gradient entry below and above provided number
 
-  var percent = 0;
-  if (max - min !== 0) percent = Math.abs((number - min) / (max - min));
-  percent = Math.min(Math.max(0, percent), 1); // split each gradient color into component rgba values
+  var lowerIndex = 0;
+  var upperIndex = gradient.length - 1;
 
-  gradient = gradient.map(function (color) {
-    color = String(color).split(/[^0-9,.]/).join('');
-    color = {
-      r: parseInt(color.split(',')[0] || 255),
-      g: parseInt(color.split(',')[1] || 255),
-      b: parseInt(color.split(',')[2] || 255),
-      a: parseFloat(color.split(',')[3] || 0)
-    };
-    return color;
-  }); // map percent to float gradient index
+  for (var index = 0; index < gradient.length - 1; index++) {
+    if (gradient[index][0] <= number && gradient[index + 1][0] > number) {
+      lowerIndex = index;
+      upperIndex = index + 1;
+      break;
+    }
+  } // get number and color below and above provided number
 
-  var gradientIndex = (gradient.length - 1) * percent; // get integer indices below/above float index
 
-  var lowerColor = gradient[Math.floor(gradientIndex)];
-  var higherColor = gradient[Math.ceil(gradientIndex)]; // get percent that float index is between nearest integer indices
+  var lowerNumber = gradient[lowerIndex][0];
+  var lowerColor = (0, _color.default)(gradient[lowerIndex][1]);
+  var upperNumber = gradient[upperIndex][0];
+  var upperColor = (0, _color.default)(gradient[upperIndex][1]); // interpolate between below and above colors
 
-  var percentBetween = gradientIndex % 1; // interpolate color between gradient colors below/above float index
-
-  var color = {
-    r: lowerColor.r + (higherColor.r - lowerColor.r) * percentBetween,
-    g: lowerColor.g + (higherColor.g - lowerColor.g) * percentBetween,
-    b: lowerColor.b + (higherColor.b - lowerColor.b) * percentBetween,
-    a: lowerColor.a + (higherColor.a - lowerColor.a) * percentBetween
-  }; // clean rgba values
-
-  color.r = Math.floor(color.r);
-  color.g = Math.floor(color.g);
-  color.b = Math.floor(color.b);
-  color.a = color.a.toFixed(3); // convert color in rgba format to css color string
-
-  color = 'rgba(' + color.r + ', ' + color.g + ', ' + color.b + ', ' + color.a + ')'; // return color
+  var percent = (number - lowerNumber) / (upperNumber - lowerNumber);
+  var color = lowerColor.mix(upperColor, percent); // return color
 
   return color || 'rgba(255, 255, 255, 0)';
 }

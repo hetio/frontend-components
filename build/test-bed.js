@@ -175,7 +175,7 @@ function (_Component) {
         }],
         bodyStyles: [null, null, function (datum, field, value) {
           return {
-            background: (0, _format.toGradient)(Math.log10(value), -20, 0, ['rgba(3, 169, 244, 0.5)', 'rgba(156, 39, 176, 0.5)', 'rgba(233, 30, 99, 0.5)', 'rgba(255, 255, 255, 0)'])
+            background: (0, _format.toGradient)(Math.log10(value), [[-25, 'rgba(3, 169, 244, 0.5)'], [-15, 'rgba(156, 39, 176, 0.5)'], [-5, 'rgba(233, 30, 99, 0.5)'], [0, 'rgba(255, 255, 255, 0)']])
           };
         }],
         bodyClasses: ['center', 'left', 'center', 'center', 'center'],
