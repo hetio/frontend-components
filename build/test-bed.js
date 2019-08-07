@@ -62,7 +62,7 @@ function (_Component) {
         smallNumber: Math.pow(Math.random(), 10),
         bigNumber: Math.floor(Math.random() * 100000),
         fruit: (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇') + (Math.random() > 0.5 ? '🍎' : '🍇'),
-        hiddenField: Math.random() > 0.5 ? 'Cat' : 'Dog'
+        aHiddenField: (Math.random() > 0.5 ? 'Red' : 'Green') + (Math.random() > 0.5 ? 'Cat' : 'Dog')
       });
     }
 
@@ -169,11 +169,13 @@ function (_Component) {
             fullValue: value
           });
         }, function (datum, field, value) {
-          return value;
+          return _react.default.createElement(_dynamicField.DynamicField, {
+            value: value
+          });
         }],
         bodyStyles: [null, null, function (datum, field, value) {
           return {
-            background: (0, _format.toGradient)(value)
+            background: (0, _format.toGradient)(Math.log10(value), -20, 0, ['rgba(3, 169, 244, 0.5)', 'rgba(156, 39, 176, 0.5)', 'rgba(233, 30, 99, 0.5)', 'rgba(255, 255, 255, 0)'])
           };
         }],
         bodyClasses: ['center', 'left', 'center', 'center', 'center'],

@@ -311,7 +311,7 @@ function (_Component) {
       data = (0, _object.copyObject)(data);
       if (!_this.state.searchString) return data;
       return data.filter(function (datum) {
-        var searchFields = _this.props.searchAllFields ? Object.keys(datum) : _this.props.fields;
+        var searchFields = _this.props.searchAllFields ? _this.props.fields.concat(Object.keys(datum)) : _this.props.fields;
         var _iteratorNormalCompletion4 = true;
         var _didIteratorError4 = false;
         var _iteratorError4 = undefined;

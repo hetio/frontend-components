@@ -33,32 +33,39 @@ function toComma(number) {
   if (typeof number !== 'number') return '-';
   return Number(number).toLocaleString();
 } // map number to css color based on specified gradient
+// gradient should be an array of rgba() CSS color strings
 
 
-function toGradient(number) {
-  if (typeof number !== 'number') return 'rgba(255, 255, 255, 0)'; // pretty gradient
+function toGradient(number, min, max, gradient) {
+  // check inputs
+  if (typeof number !== 'number') return 'rgba(255, 255, 255, 0)';
+  if (!Array.isArray(gradient) || !gradient.length) gradient = ['rgba(255, 255, 255, 0)'];
+  if (typeof min !== 'number') min = 0;
+  if (typeof max !== 'number') max = 100;
 
-  var gradient = ['rgba(233, 30, 99, 0)', 'rgba(233, 30, 99, 0.35)', 'rgba(233, 30, 99, 0.5)']; // split each gradient color into component rgba values
+  if (min > max) {
+    var temp = max;
+    max = min;
+    min = temp;
+  }
+
+  if (number < min) return gradient[0];
+  if (number > max) return gradient[gradient.length - 1]; // get percent that number is through range
+
+  var percent = 0;
+  if (max - min !== 0) percent = Math.abs((number - min) / (max - min));
+  percent = Math.min(Math.max(0, percent), 1); // split each gradient color into component rgba values
 
   gradient = gradient.map(function (color) {
-    color = color.split(/[^0-9,.]/).join('');
+    color = String(color).split(/[^0-9,.]/).join('');
     color = {
-      r: parseInt(color.split(',')[0]),
-      g: parseInt(color.split(',')[1]),
-      b: parseInt(color.split(',')[2]),
-      a: parseFloat(color.split(',')[3])
+      r: parseInt(color.split(',')[0] || 255),
+      g: parseInt(color.split(',')[1] || 255),
+      b: parseInt(color.split(',')[2] || 255),
+      a: parseFloat(color.split(',')[3] || 0)
     };
     return color;
-  }); // take log of number
-  // (equivalent of getting exponent of number in exponential notation)
-
-  number = Math.log10(number); // start/end cutoffs for exponent
-
-  var rangeStart = 0;
-  var rangeEnd = -100; // get percent that number is through range
-
-  var percent = (number - rangeStart) / (rangeEnd - rangeStart);
-  percent = Math.min(Math.max(0, percent), 1); // map percent to float gradient index
+  }); // map percent to float gradient index
 
   var gradientIndex = (gradient.length - 1) * percent; // get integer indices below/above float index
 
