@@ -16,7 +16,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // get html of number in exponential form
 function toExponential(number) {
-  if (typeof number !== 'number') return '-';
+  number = Number(number);
+  if (Number.isNaN(number)) return '-';
   number = parseFloat(number).toExponential(1);
   var mantissa = parseFloat(number.split('e')[0]).toFixed(1);
   var exponent = parseInt(number.split('e')[1]);
@@ -26,13 +27,15 @@ function toExponential(number) {
 
 
 function toFixed(number, precision) {
-  if (typeof number !== 'number') return '-';
+  number = Number(number);
+  if (Number.isNaN(number)) return '-';
   return parseFloat(number).toFixed(precision || 1);
 } // split many-digit number by comma (or other, depending on locale)
 
 
 function toComma(number) {
-  if (typeof number !== 'number') return '-';
+  number = Number(number);
+  if (Number.isNaN(number)) return '-';
   return Number(number).toLocaleString();
 } // map number to css color based on specified gradient
 // gradient should be in format [ ... , [number, 'rgba()'], ... ]
@@ -40,8 +43,8 @@ function toComma(number) {
 
 
 function toGradient(number, gradient) {
-  // check inputs
-  if (typeof number !== 'number' || !Array.isArray(gradient) || !gradient.length) return 'rgba(255, 255, 255, 0)'; // sort gradient by number
+  number = Number(number);
+  if (Number.isNaN(number) || !Array.isArray(gradient) || !gradient.length) return 'rgba(255, 255, 255, 0)'; // sort gradient by number
 
   gradient.sort(function (a, b) {
     return a[0] - b[0];

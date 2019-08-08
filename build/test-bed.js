@@ -125,7 +125,7 @@ function (_Component) {
             data: newData
           });
         },
-        defaultSortField: "smallNumber",
+        defaultSortField: "bigNumber",
         defaultSortUp: false,
         topContents: [null, null, 'numbers', null],
         topStyles: [{
