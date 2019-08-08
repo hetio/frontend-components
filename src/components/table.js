@@ -321,9 +321,11 @@ export class Table extends Component {
 
     data = copyObject(data);
 
-    // remove row index property from each object
-    for (const datum of data)
+    // remove under-the-hood keys from data before passing it to user
+    for (const datum of data) {
       delete datum[rowIndexKey];
+      delete datum[cellHighlightKey];
+    }
 
     this.props.onChange(data);
   };
@@ -881,18 +883,25 @@ class BodyRow extends Component {
       const datum = this.props.datum;
       const value = datum[field];
 
+      // remove under-the-hood keys from data before passing it to user
+      const cleanDatum = this.props.datum;
+      delete cleanDatum[rowIndexKey];
+      delete cleanDatum[cellHighlightKey];
+
+      // get the value of each item, either as pure value, or value returned
+      // from a provided function
       let content = this.context.bodyContents[index];
       if (typeof content === 'function')
-        content = content(datum, field, value);
+        content = content(cleanDatum, field, value);
       let style = this.context.bodyStyles[index];
       if (typeof style === 'function')
-        style = style(datum, field, value);
+        style = style(cleanDatum, field, value);
       let className = this.context.bodyClasses[index];
       if (typeof className === 'function')
-        className = className(datum, field, value);
+        className = className(cleanDatum, field, value);
       let tooltip = this.context.bodyTooltips[index];
       if (typeof tooltip === 'function')
-        tooltip = tooltip(datum, field, value);
+        tooltip = tooltip(cleanDatum, field, value);
 
       const props = {
         key: index,
