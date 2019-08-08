@@ -74,11 +74,7 @@ function (_Component) {
     value: function render() {
       var _this2 = this;
 
-      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement("link", {
-        rel: "stylesheet",
-        type: "text/css",
-        href: "https://het.io/global.css"
-      }), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement(_buttons.Button, {
+      return _react.default.createElement(_react.default.Fragment, null, _react.default.createElement(_buttons.Button, {
         onClick: function onClick() {
           return console.log('button click');
         },
