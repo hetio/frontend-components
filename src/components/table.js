@@ -321,7 +321,7 @@ export class Table extends Component {
 
     data = copyObject(data);
 
-    // remove row index and highlight properties from each object
+    // remove under-the-hood keys from data before passing it to user
     for (const datum of data) {
       delete datum[rowIndexKey];
       delete datum[cellHighlightKey];
@@ -883,7 +883,7 @@ class BodyRow extends Component {
       const datum = this.props.datum;
       const value = datum[field];
 
-      // remove under-the-hood properties from datum for calling functions
+      // remove under-the-hood keys from data before passing it to user
       const cleanDatum = this.props.datum;
       delete cleanDatum[rowIndexKey];
       delete cleanDatum[cellHighlightKey];
