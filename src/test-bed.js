@@ -111,7 +111,7 @@ export class TestBed extends Component {
             }
           }}
           onChange={(newData) => this.setState({ data: newData })}
-          defaultSortField='smallNumber'
+          defaultSortField='bigNumber'
           defaultSortUp={false}
           topContents={[null, null, 'numbers', null]}
           topStyles={[
