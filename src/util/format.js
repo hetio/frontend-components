@@ -3,7 +3,8 @@ import Color from 'color';
 
 // get html of number in exponential form
 export function toExponential(number) {
-  if (typeof number !== 'number')
+  number = Number(number);
+  if (Number.isNaN(number))
     return '-';
 
   number = parseFloat(number).toExponential(1);
@@ -22,14 +23,16 @@ export function toExponential(number) {
 
 // get html of number in regular form, rounded to 1 decimal digit
 export function toFixed(number, precision) {
-  if (typeof number !== 'number')
+  number = Number(number);
+  if (Number.isNaN(number))
     return '-';
   return parseFloat(number).toFixed(precision || 1);
 }
 
 // split many-digit number by comma (or other, depending on locale)
 export function toComma(number) {
-  if (typeof number !== 'number')
+  number = Number(number);
+  if (Number.isNaN(number))
     return '-';
   return Number(number).toLocaleString();
 }
@@ -38,12 +41,8 @@ export function toComma(number) {
 // gradient should be in format [ ... , [number, 'rgba()'], ... ]
 // values between gradient steps are linearly interpolated
 export function toGradient(number, gradient) {
-  // check inputs
-  if (
-    typeof number !== 'number' ||
-    !Array.isArray(gradient) ||
-    !gradient.length
-  )
+  number = Number(number);
+  if (Number.isNaN(number) || !Array.isArray(gradient) || !gradient.length)
     return 'rgba(255, 255, 255, 0)';
 
   // sort gradient by number
