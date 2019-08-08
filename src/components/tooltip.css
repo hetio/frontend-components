@@ -7,8 +7,8 @@
   max-width: 320px;
   min-height: 30px;
   padding: 5px;
-  background: #303030;
-  color: #fafafa;
+  background: var(--black);
+  color: var(--white);
   font-size: 0.75em;
   transform: translate(0, calc(-100% - 5px));
   user-select: none;
