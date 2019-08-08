@@ -175,7 +175,7 @@ function (_Component) {
 
     _defineProperty(_assertThisInitialized(_this), "setData", function (data) {
       if (!_this.props.onChange) return;
-      data = (0, _object.copyObject)(data); // remove row index property from each object
+      data = (0, _object.copyObject)(data); // remove under-the-hood keys from data before passing it to user
 
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
@@ -185,6 +185,7 @@ function (_Component) {
         for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var datum = _step.value;
           delete datum[rowIndexKey];
+          delete datum[cellHighlightKey];
         }
       } catch (err) {
         _didIteratorError = true;
@@ -1070,15 +1071,21 @@ function (_Component9) {
 
       var cells = this.context.fields.map(function (field, index) {
         var datum = _this7.props.datum;
-        var value = datum[field];
+        var value = datum[field]; // remove under-the-hood keys from data before passing it to user
+
+        var cleanDatum = _this7.props.datum;
+        delete cleanDatum[rowIndexKey];
+        delete cleanDatum[cellHighlightKey]; // get the value of each item, either as pure value, or value returned
+        // from a provided function
+
         var content = _this7.context.bodyContents[index];
-        if (typeof content === 'function') content = content(datum, field, value);
+        if (typeof content === 'function') content = content(cleanDatum, field, value);
         var style = _this7.context.bodyStyles[index];
-        if (typeof style === 'function') style = style(datum, field, value);
+        if (typeof style === 'function') style = style(cleanDatum, field, value);
         var className = _this7.context.bodyClasses[index];
-        if (typeof className === 'function') className = className(datum, field, value);
+        if (typeof className === 'function') className = className(cleanDatum, field, value);
         var tooltip = _this7.context.bodyTooltips[index];
-        if (typeof tooltip === 'function') tooltip = tooltip(datum, field, value);
+        if (typeof tooltip === 'function') tooltip = tooltip(cleanDatum, field, value);
         var props = {
           key: index,
           datum: datum,
