@@ -83,6 +83,9 @@ function (_Component) {
         onCtrlClick: function onCtrlClick() {
           return console.log('button ctrl+click');
         },
+        onShiftClick: function onShiftClick() {
+          return console.log('button shift+click');
+        },
         tooltipText: "Generic button tooltip text"
       }, "Generic Button"), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement(_buttons.IconButton, {
         icon: _freeSolidSvgIcons.faStar,
@@ -182,7 +185,7 @@ function (_Component) {
         }]
       }), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement("b", null, "Info Table"), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement(_infoTable.InfoTable, {
         headContent: "Info Table",
-        bodyContents: [['dog breed', 'Tooltip describing the dog breed field', 'Labrador', 'labrador'], ['vegetable', 'Tooltip describing the vegetable field', 'Broccoli', 'broccoli'], ['vehicle', 'Tooltip describing the vehicle field', 'Truck', 'truck'], ['clothing', 'Tooltip describing the clothing field', 'Gloves', 'gloves'], ['planet', 'Tooltip describing the planet field', 'Jupiter', 'jupiter']]
+        bodyContents: [['dog breed', 'Tooltip describing the dog breed field', 'Labrador Labrador Labrador Labrador Labrador Labrador Labrador', 'labrador labrador labrador labrador labrador labrador labrador'], ['vegetable', 'Tooltip describing the vegetable field', 'Broccoli', 'broccoli'], ['vehicle', 'Tooltip describing the vehicle field', 'Truck', 'truck'], ['clothing', 'Tooltip describing the clothing field', 'Gloves', 'gloves'], ['planet', 'Tooltip describing the planet field', 'Jupiter', 'jupiter']]
       }));
     }
   }]);

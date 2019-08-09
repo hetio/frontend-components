@@ -143,12 +143,6 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Table).call(this, props)); // ref to table container
 
-    _defineProperty(_assertThisInitialized(_this), "setHovered", function (hovered) {
-      _this.setState({
-        hovered: hovered
-      });
-    });
-
     _defineProperty(_assertThisInitialized(_this), "onKeyDown", function (event) {
       if (!_this.ref.current) return;
       if (!_this.state.hovered) return; // if user is hovering over table, let arrow keys control pagination nav
@@ -160,13 +154,6 @@ function (_Component) {
       if (event.key === 'ArrowRight') {
         if (event.ctrlKey) _this.setPage(_this.state.pages);else _this.setPage(_this.state.page + 1);
       }
-    });
-
-    _defineProperty(_assertThisInitialized(_this), "onMouseMove", function (event) {
-      _this.setState({
-        mouseX: event.clientX,
-        mouseY: event.clientY
-      });
     });
 
     _defineProperty(_assertThisInitialized(_this), "onMouseUp", function (event) {
@@ -650,14 +637,14 @@ function (_Component) {
     _this.state.searchResults = 0;
     _this.state.page = 1;
     _this.state.pages = 1;
-    _this.state.perPages = _this.props.perPages || [5, 10, 15, 25, 50, 100, 500, 1000, 'all'];
+    _this.state.perPages = _this.props.perPages || [5, 10, 15, 25, 50, 100];
     _this.state.perPage = _this.props.defaultPerPage || 10;
     _this.state.dragField = null;
     _this.state.dragValue = null;
-    _this.state.dragList = []; // end checkbox drag when mouse released anywhere
+    _this.state.dragList = []; // listen for key press anywhere to trigger keyboard shortcuts
 
-    window.addEventListener('mousemove', _this.onMouseMove);
-    window.addEventListener('keydown', _this.onKeyDown);
+    window.addEventListener('keydown', _this.onKeyDown); // end checkbox drag when mouse released anywhere
+
     window.addEventListener('mouseup', _this.onMouseUp);
     return _this;
   } // when component mounts
@@ -725,7 +712,7 @@ function (_Component) {
 
 
       if (Object.keys(newState).length > 0) this.setState(newState);
-    } // set hovered state
+    } // when user presses key anywhere in window
 
   }, {
     key: "render",
@@ -736,10 +723,6 @@ function (_Component) {
       return _react.default.createElement(TableContext.Provider, {
         value: {
           // give props to TableContext that children components may need
-          // mouse
-          setHovered: this.setHovered,
-          mouseX: this.state.mouseX,
-          mouseY: this.state.mouseY,
           // checkbox
           dragField: this.state.dragField,
           dragValue: this.state.dragValue,
@@ -788,13 +771,18 @@ function (_Component) {
         className: this.props.containerClass || '',
         ref: this.ref,
         onMouseEnter: function onMouseEnter() {
-          return _this2.setHovered(true);
+          return _this2.setState({
+            hovered: true
+          });
         },
         onMouseLeave: function onMouseLeave() {
-          return _this2.setHovered(false);
+          return _this2.setState({
+            hovered: false
+          });
         }
       }, _react.default.createElement("table", {
-        className: this.props.className || ''
+        className: this.props.className || '',
+        onMouseMove: this.onMouseMove
       }, _react.default.createElement("thead", null, _react.default.createElement(Top, null), _react.default.createElement(Head, null)), _react.default.createElement("tbody", null, _react.default.createElement(Body, null)))), _react.default.createElement(Controls, null));
     }
   }]);
@@ -1122,14 +1110,13 @@ function (_Component10) {
     _this8 = _possibleConstructorReturn(this, _getPrototypeOf(BodyCheckboxCell).call(this));
     _this8.state = {}; // temporary checked state for dragging
 
-    _this8.state.tempChecked = null; // track previous y of mouse
-
-    _this8.prevMouseY = 0;
+    _this8.state.tempChecked = null;
     _this8.onCtrlClick = _this8.onCtrlClick.bind(_assertThisInitialized(_this8));
     _this8.onMouseDown = _this8.onMouseDown.bind(_assertThisInitialized(_this8));
+    _this8.onMouseMove = _this8.onMouseMove.bind(_assertThisInitialized(_this8));
     _this8.onMouseUp = _this8.onMouseUp.bind(_assertThisInitialized(_this8));
-    window.addEventListener('mouseup', _this8.onMouseUp);
     _this8.ref = _react.default.createRef();
+    window.addEventListener('mouseup', _this8.onMouseUp);
     return _this8;
   } // when component unmounts
 
@@ -1138,28 +1125,6 @@ function (_Component10) {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       window.removeEventListener('mouseup', this.onMouseUp);
-    } // when component updates
-    // fires when receiving new mouse position from context
-
-  }, {
-    key: "componentDidUpdate",
-    value: function componentDidUpdate() {
-      // if this column is the column being dragged
-      if (this.context.dragField === this.props.field && typeof this.context.dragValue === 'boolean') {
-        // if mouse passes by button vertically
-        var bbox = this.ref.current.getBoundingClientRect();
-
-        if (this.prevMouseY < bbox.top && this.context.mouseY >= bbox.top || this.prevMouseY > bbox.bottom && this.context.mouseY <= bbox.bottom) {
-          // add self to drag list and temp check
-          this.context.addToDragList(this.props.datum[rowIndexKey]);
-          this.setState({
-            tempChecked: this.context.dragValue
-          });
-        }
-      } // track previous y of mouse
-
-
-      this.prevMouseY = this.context.mouseY;
     } // on ctrl+click
 
   }, {
@@ -1176,6 +1141,19 @@ function (_Component10) {
       this.setState({
         tempChecked: !this.props.value
       });
+    } // on mouse move over button
+
+  }, {
+    key: "onMouseMove",
+    value: function onMouseMove() {
+      // if this column is the column being dragged
+      if (this.context.dragField === this.props.field && typeof this.context.dragValue === 'boolean') {
+        // add self to drag list and temp check
+        this.context.addToDragList(this.props.datum[rowIndexKey]);
+        this.setState({
+          tempChecked: this.context.dragValue
+        });
+      }
     } // on mouse up anywhere
 
   }, {
@@ -1201,7 +1179,8 @@ function (_Component10) {
       }, _react.default.createElement(_buttons.Button, {
         className: 'table_button',
         onCtrlClick: this.onCtrlClick,
-        onMouseDown: this.onMouseDown
+        onMouseDown: this.onMouseDown,
+        onMouseMove: this.onMouseMove
       }, _react.default.createElement("span", {
         "data-checked": checked ? true : false
       }, this.props.content || ''))));
@@ -1289,13 +1268,7 @@ function (_Component13) {
       var _this9 = this;
 
       return _react.default.createElement("div", {
-        className: "table_nav",
-        onMouseEnter: function onMouseEnter() {
-          return _this9.context.setHovered(true);
-        },
-        onMouseLeave: function onMouseLeave() {
-          return _this9.context.setHovered(false);
-        }
+        className: "table_nav"
       }, _react.default.createElement(_buttons.Button, {
         tooltipText: "Go to first page",
         className: "table_nav_button",
@@ -1377,8 +1350,6 @@ function (_Component14) {
     key: "render",
     // display component
     value: function render() {
-      var _this11 = this;
-
       var options = this.context.perPages.map(function (entry, index) {
         return _react.default.createElement("option", {
           key: index,
@@ -1386,13 +1357,7 @@ function (_Component14) {
         }, entry);
       });
       return _react.default.createElement("div", {
-        className: "table_per_page",
-        onMouseEnter: function onMouseEnter() {
-          return _this11.context.setHovered(true);
-        },
-        onMouseLeave: function onMouseLeave() {
-          return _this11.context.setHovered(false);
-        }
+        className: "table_per_page"
       }, _react.default.createElement("div", {
         className: "table_input"
       }, _react.default.createElement(_tooltip.Tooltip, {
@@ -1419,26 +1384,26 @@ function (_Component15) {
 
   // intialize component
   function Search() {
-    var _this12;
+    var _this11;
 
     _classCallCheck(this, Search);
 
-    _this12 = _possibleConstructorReturn(this, _getPrototypeOf(Search).call(this));
+    _this11 = _possibleConstructorReturn(this, _getPrototypeOf(Search).call(this));
 
-    _defineProperty(_assertThisInitialized(_this12), "onInput", function (event) {
-      if (event && event.target && _this12.context.onSearch) _this12.context.onSearch(event.target.value);
+    _defineProperty(_assertThisInitialized(_this11), "onInput", function (event) {
+      if (event && event.target && _this11.context.onSearch) _this11.context.onSearch(event.target.value);
     });
 
-    _defineProperty(_assertThisInitialized(_this12), "onClick", function () {
-      _this12.ref.current.focus();
+    _defineProperty(_assertThisInitialized(_this11), "onClick", function () {
+      _this11.ref.current.focus();
 
-      _this12.ref.current.value = '';
+      _this11.ref.current.value = '';
 
-      _this12.context.onSearch('');
+      _this11.context.onSearch('');
     });
 
-    _this12.ref = _react.default.createRef();
-    return _this12;
+    _this11.ref = _react.default.createRef();
+    return _this11;
   } // when user types into box
 
 
