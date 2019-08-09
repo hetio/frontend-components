@@ -884,7 +884,7 @@ class BodyRow extends Component {
       const value = datum[field];
 
       // remove under-the-hood keys from data before passing it to user
-      const cleanDatum = this.props.datum;
+      const cleanDatum = copyObject(this.props.datum);
       delete cleanDatum[rowIndexKey];
       delete cleanDatum[cellHighlightKey];
 
