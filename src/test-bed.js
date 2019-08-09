@@ -52,6 +52,7 @@ export class TestBed extends Component {
         <Button
           onClick={() => console.log('button click')}
           onCtrlClick={() => console.log('button ctrl+click')}
+          onShiftClick={() => console.log('button shift+click')}
           tooltipText='Generic button tooltip text'
         >
           Generic Button
@@ -193,8 +194,8 @@ export class TestBed extends Component {
             [
               'dog breed',
               'Tooltip describing the dog breed field',
-              'Labrador',
-              'labrador'
+              'Labrador Labrador Labrador Labrador Labrador Labrador Labrador',
+              'labrador labrador labrador labrador labrador labrador labrador'
             ],
             [
               'vegetable',

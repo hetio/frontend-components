@@ -7,19 +7,22 @@
   flex-direction: row;
 }
 .info_table_key {
-  width: 14%;
+  width: 15%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .info_table_value {
-  width: 34%;
+  width: 35%;
+}
+.info_table_value .dynamic_field {
+  padding: 0 10px 0 5px;
 }
 @media screen and (max-width: 640px) {
   .info_table_key {
-    width: 28%;
+    width: 30%;
   }
   .info_table_value {
-    width: 68%;
+    width: 70%;
   }
 }
