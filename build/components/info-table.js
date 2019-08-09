@@ -52,14 +52,14 @@ function (_Component) {
         return _react.default.createElement(_react.default.Fragment, {
           key: index
         }, _react.default.createElement(_tooltip.Tooltip, {
-          text: row[1] || ''
+          text: row[1]
         }, _react.default.createElement("div", {
           className: "info_table_key small left light semibold"
-        }, row[0] || '-')), _react.default.createElement("div", {
+        }, row[0])), _react.default.createElement("div", {
           className: "info_table_value small left"
         }, _react.default.createElement(_dynamicField.DynamicField, {
-          value: row[2] || '-',
-          fullValue: row[3] || '-'
+          value: row[2],
+          fullValue: row[3] === undefined ? row[2] : row[3]
         })));
       });
       return _react.default.createElement("div", {
