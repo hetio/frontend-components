@@ -781,8 +781,7 @@ function (_Component) {
           });
         }
       }, _react.default.createElement("table", {
-        className: this.props.className || '',
-        onMouseMove: this.onMouseMove
+        className: this.props.className || ''
       }, _react.default.createElement("thead", null, _react.default.createElement(Top, null), _react.default.createElement(Head, null)), _react.default.createElement("tbody", null, _react.default.createElement(Body, null)))), _react.default.createElement(Controls, null));
     }
   }]);
