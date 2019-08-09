@@ -159,25 +159,15 @@ export class Table extends Component {
     this.state.searchResults = 0;
     this.state.page = 1;
     this.state.pages = 1;
-    this.state.perPages = this.props.perPages || [
-      5,
-      10,
-      15,
-      25,
-      50,
-      100,
-      500,
-      1000,
-      'all'
-    ];
+    this.state.perPages = this.props.perPages || [5, 10, 15, 25, 50, 100];
     this.state.perPage = this.props.defaultPerPage || 10;
     this.state.dragField = null;
     this.state.dragValue = null;
     this.state.dragList = [];
 
-    // end checkbox drag when mouse released anywhere
-    window.addEventListener('mousemove', this.onMouseMove);
+    // listen for key press anywhere to trigger keyboard shortcuts
     window.addEventListener('keydown', this.onKeyDown);
+    // end checkbox drag when mouse released anywhere
     window.addEventListener('mouseup', this.onMouseUp);
   }
 
@@ -271,11 +261,6 @@ export class Table extends Component {
       this.setState(newState);
   }
 
-  // set hovered state
-  setHovered = (hovered) => {
-    this.setState({ hovered: hovered });
-  };
-
   // when user presses key anywhere in window
   onKeyDown = (event) => {
     if (!this.ref.current)
@@ -298,11 +283,6 @@ export class Table extends Component {
       else
         this.setPage(this.state.page + 1);
     }
-  };
-
-  // when user moves mouse anywhere
-  onMouseMove = (event) => {
-    this.setState({ mouseX: event.clientX, mouseY: event.clientY });
   };
 
   // when user releases mouse anywhere
@@ -638,10 +618,6 @@ export class Table extends Component {
         value={{
           // give props to TableContext that children components may need
 
-          // mouse
-          setHovered: this.setHovered,
-          mouseX: this.state.mouseX,
-          mouseY: this.state.mouseY,
           // checkbox
           dragField: this.state.dragField,
           dragValue: this.state.dragValue,
@@ -690,10 +666,13 @@ export class Table extends Component {
         <div
           className={this.props.containerClass || ''}
           ref={this.ref}
-          onMouseEnter={() => this.setHovered(true)}
-          onMouseLeave={() => this.setHovered(false)}
+          onMouseEnter={() => this.setState({ hovered: true })}
+          onMouseLeave={() => this.setState({ hovered: false })}
         >
-          <table className={this.props.className || ''}>
+          <table
+            className={this.props.className || ''}
+            onMouseMove={this.onMouseMove}
+          >
             <thead>
               <Top />
               <Head />
@@ -933,45 +912,20 @@ class BodyCheckboxCell extends Component {
     this.state = {};
     // temporary checked state for dragging
     this.state.tempChecked = null;
-    // track previous y of mouse
-    this.prevMouseY = 0;
 
     this.onCtrlClick = this.onCtrlClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
 
-    window.addEventListener('mouseup', this.onMouseUp);
-
     this.ref = React.createRef();
+
+    window.addEventListener('mouseup', this.onMouseUp);
   }
 
   // when component unmounts
   componentWillUnmount() {
     window.removeEventListener('mouseup', this.onMouseUp);
-  }
-
-  // when component updates
-  // fires when receiving new mouse position from context
-  componentDidUpdate() {
-    // if this column is the column being dragged
-    if (
-      this.context.dragField === this.props.field &&
-      typeof this.context.dragValue === 'boolean'
-    ) {
-      // if mouse passes by button vertically
-      const bbox = this.ref.current.getBoundingClientRect();
-      if (
-        (this.prevMouseY < bbox.top && this.context.mouseY >= bbox.top) ||
-        (this.prevMouseY > bbox.bottom && this.context.mouseY <= bbox.bottom)
-      ) {
-        // add self to drag list and temp check
-        this.context.addToDragList(this.props.datum[rowIndexKey]);
-        this.setState({ tempChecked: this.context.dragValue });
-      }
-    }
-
-    // track previous y of mouse
-    this.prevMouseY = this.context.mouseY;
   }
 
   // on ctrl+click
@@ -984,6 +938,19 @@ class BodyCheckboxCell extends Component {
     this.context.beginDrag(this.props.field, !this.props.value);
     this.context.addToDragList(this.props.datum[rowIndexKey]);
     this.setState({ tempChecked: !this.props.value });
+  }
+
+  // on mouse move over button
+  onMouseMove() {
+    // if this column is the column being dragged
+    if (
+      this.context.dragField === this.props.field &&
+      typeof this.context.dragValue === 'boolean'
+    ) {
+      // add self to drag list and temp check
+      this.context.addToDragList(this.props.datum[rowIndexKey]);
+      this.setState({ tempChecked: this.context.dragValue });
+    }
   }
 
   // on mouse up anywhere
@@ -1011,6 +978,7 @@ class BodyCheckboxCell extends Component {
             className={'table_button'}
             onCtrlClick={this.onCtrlClick}
             onMouseDown={this.onMouseDown}
+            onMouseMove={this.onMouseMove}
           >
             <span data-checked={checked ? true : false}>
               {this.props.content || ''}
@@ -1068,11 +1036,7 @@ class Nav extends Component {
   // display component
   render() {
     return (
-      <div
-        className='table_nav'
-        onMouseEnter={() => this.context.setHovered(true)}
-        onMouseLeave={() => this.context.setHovered(false)}
-      >
+      <div className='table_nav'>
         <Button
           tooltipText='Go to first page'
           className='table_nav_button'
@@ -1133,11 +1097,7 @@ class PerPage extends Component {
       </option>
     ));
     return (
-      <div
-        className='table_per_page'
-        onMouseEnter={() => this.context.setHovered(true)}
-        onMouseLeave={() => this.context.setHovered(false)}
-      >
+      <div className='table_per_page'>
         <div className='table_input'>
           <Tooltip text='Rows to show per page'>
             <select
