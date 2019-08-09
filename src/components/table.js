@@ -669,10 +669,7 @@ export class Table extends Component {
           onMouseEnter={() => this.setState({ hovered: true })}
           onMouseLeave={() => this.setState({ hovered: false })}
         >
-          <table
-            className={this.props.className || ''}
-            onMouseMove={this.onMouseMove}
-          >
+          <table className={this.props.className || ''}>
             <thead>
               <Top />
               <Head />
