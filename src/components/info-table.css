@@ -1,0 +1,25 @@
+.info_table {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+.info_table_key {
+  width: 20%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.info_table_value {
+  width: 30%;
+}
+@media screen and (max-width: 640px) {
+  .info_table_key {
+    width: 33.333%;
+  }
+  .info_table_value {
+    width: 66.666%;
+  }
+}

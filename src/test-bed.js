@@ -9,6 +9,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip } from './components/tooltip.js';
 import { DynamicField } from './components/dynamic-field.js';
 import { Table } from './components/table.js';
+import { InfoTable } from './components/info-table.js';
 import { toExponential } from './util/format.js';
 import { toGradient } from './util/format.js';
 import { toComma } from './util/format.js';
@@ -179,6 +180,46 @@ export class TestBed extends Component {
           bodyTooltips={[
             null,
             (datum, field, value) => value + ' is my username'
+          ]}
+        />
+        <br />
+        <br />
+        <b>Info Table</b>
+        <br />
+        <br />
+        <InfoTable
+          headContent='Info Table'
+          bodyContents={[
+            [
+              'dog breed',
+              'Tooltip describing the dog breed field',
+              'Labrador',
+              'labrador'
+            ],
+            [
+              'vegetable',
+              'Tooltip describing the vegetable field',
+              'Broccoli',
+              'broccoli'
+            ],
+            [
+              'vehicle',
+              'Tooltip describing the vehicle field',
+              'Truck',
+              'truck'
+            ],
+            [
+              'clothing',
+              'Tooltip describing the clothing field',
+              'Gloves',
+              'gloves'
+            ],
+            [
+              'planet',
+              'Tooltip describing the planet field',
+              'Jupiter',
+              'jupiter'
+            ]
           ]}
         />
       </>
