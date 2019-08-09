@@ -1073,7 +1073,7 @@ function (_Component9) {
         var datum = _this7.props.datum;
         var value = datum[field]; // remove under-the-hood keys from data before passing it to user
 
-        var cleanDatum = _this7.props.datum;
+        var cleanDatum = (0, _object.copyObject)(_this7.props.datum);
         delete cleanDatum[rowIndexKey];
         delete cleanDatum[cellHighlightKey]; // get the value of each item, either as pure value, or value returned
         // from a provided function

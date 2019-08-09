@@ -19,6 +19,8 @@ var _dynamicField = require("./components/dynamic-field.js");
 
 var _table = require("./components/table.js");
 
+var _infoTable = require("./components/info-table.js");
+
 var _format = require("./util/format.js");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
@@ -178,6 +180,9 @@ function (_Component) {
         bodyTooltips: [null, function (datum, field, value) {
           return value + ' is my username';
         }]
+      }), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement("b", null, "Info Table"), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement(_infoTable.InfoTable, {
+        headContent: "Info Table",
+        bodyContents: [['dog breed', 'Tooltip describing the dog breed field', 'Labrador', 'labrador'], ['vegetable', 'Tooltip describing the vegetable field', 'Broccoli', 'broccoli'], ['vehicle', 'Tooltip describing the vehicle field', 'Truck', 'truck'], ['clothing', 'Tooltip describing the clothing field', 'Gloves', 'gloves'], ['planet', 'Tooltip describing the planet field', 'Jupiter', 'jupiter']]
       }));
     }
   }]);

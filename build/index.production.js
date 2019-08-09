@@ -33,6 +33,12 @@ Object.defineProperty(exports, "Table", {
     return _table.Table;
   }
 });
+Object.defineProperty(exports, "InfoTable", {
+  enumerable: true,
+  get: function get() {
+    return _infoTable.InfoTable;
+  }
+});
 Object.defineProperty(exports, "sortCustom", {
   enumerable: true,
   get: function get() {
@@ -137,6 +143,8 @@ var _tooltip = require("./components/tooltip.js");
 var _dynamicField = require("./components/dynamic-field.js");
 
 var _table = require("./components/table.js");
+
+var _infoTable = require("./components/info-table.js");
 
 var _array = require("./util/array.js");
 
