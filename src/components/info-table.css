@@ -7,19 +7,19 @@
   flex-direction: row;
 }
 .info_table_key {
-  width: 15%;
+  width: 14%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .info_table_value {
-  width: 35%;
+  width: 34%;
 }
 @media screen and (max-width: 640px) {
   .info_table_key {
-    width: 30%;
+    width: 28%;
   }
   .info_table_value {
-    width: 70%;
+    width: 68%;
   }
 }
