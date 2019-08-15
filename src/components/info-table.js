@@ -12,7 +12,7 @@ export class InfoTable extends Component {
     const rows = this.props.bodyContents.map((row, index) => (
       <React.Fragment key={index}>
         <Tooltip text={row[1]}>
-          <div className='info_table_key small left light semibold'>
+          <div className='info_table_key small left light'>
             {row[0]}
           </div>
         </Tooltip>
