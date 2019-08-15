@@ -54,7 +54,7 @@ function (_Component) {
         }, _react.default.createElement(_tooltip.Tooltip, {
           text: row[1]
         }, _react.default.createElement("div", {
-          className: "info_table_key small left light semibold"
+          className: "info_table_key small left light"
         }, row[0])), _react.default.createElement("div", {
           className: "info_table_value small left"
         }, _react.default.createElement(_dynamicField.DynamicField, {
