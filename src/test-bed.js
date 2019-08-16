@@ -82,6 +82,7 @@ export class TestBed extends Component {
         <br />
         <i>{this.state.data.filter((datum) => datum.checked).length} starred</i>
         <Table
+          containerClass="table_container"
           data={this.state.data}
           fields={['checked', 'text', 'smallNumber', 'bigNumber', 'fruit']}
           checkboxes={[true]}
@@ -119,9 +120,8 @@ export class TestBed extends Component {
           topStyles={[
             { width: 25 },
             { width: 150 },
-            { width: 100 },
-            { width: 100 },
-            { width: 100 }
+            { width: 200 },
+            { width: 150 }
           ]}
           topClasses={['small', 'small', 'small']}
           topColspans={[1, 1, 2, 1]}
