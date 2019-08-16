@@ -104,6 +104,7 @@ function (_Component) {
       })), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement("b", null, "Table"), _react.default.createElement("br", null), _react.default.createElement("i", null, this.state.data.length, " entries"), _react.default.createElement("br", null), _react.default.createElement("i", null, this.state.data.filter(function (datum) {
         return datum.checked;
       }).length, " starred"), _react.default.createElement(_table.Table, {
+        containerClass: "table_container",
         data: this.state.data,
         fields: ['checked', 'text', 'smallNumber', 'bigNumber', 'fruit'],
         checkboxes: [true],
@@ -138,11 +139,9 @@ function (_Component) {
         }, {
           width: 150
         }, {
-          width: 100
+          width: 200
         }, {
-          width: 100
-        }, {
-          width: 100
+          width: 150
         }],
         topClasses: ['small', 'small', 'small'],
         topColspans: [1, 1, 2, 1],
