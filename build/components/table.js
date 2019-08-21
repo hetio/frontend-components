@@ -712,6 +712,13 @@ function (_Component) {
 
 
       if (Object.keys(newState).length > 0) this.setState(newState);
+    } // when component unmounts
+
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      window.removeEventListener('keydown', this.onKeyDown);
+      window.removeEventListener('mouseup', this.onMouseUp);
     } // when user presses key anywhere in window
 
   }, {
@@ -1114,7 +1121,8 @@ function (_Component10) {
     _this8.onMouseDown = _this8.onMouseDown.bind(_assertThisInitialized(_this8));
     _this8.onMouseMove = _this8.onMouseMove.bind(_assertThisInitialized(_this8));
     _this8.onMouseUp = _this8.onMouseUp.bind(_assertThisInitialized(_this8));
-    _this8.ref = _react.default.createRef();
+    _this8.ref = _react.default.createRef(); // end checkbox drag when mouse released anywhere
+
     window.addEventListener('mouseup', _this8.onMouseUp);
     return _this8;
   } // when component unmounts
