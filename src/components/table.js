@@ -261,6 +261,12 @@ export class Table extends Component {
       this.setState(newState);
   }
 
+  // when component unmounts
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('mouseup', this.onMouseUp);
+  }
+
   // when user presses key anywhere in window
   onKeyDown = (event) => {
     if (!this.ref.current)
@@ -917,6 +923,7 @@ class BodyCheckboxCell extends Component {
 
     this.ref = React.createRef();
 
+    // end checkbox drag when mouse released anywhere
     window.addEventListener('mouseup', this.onMouseUp);
   }
 
