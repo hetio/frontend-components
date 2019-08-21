@@ -37,6 +37,7 @@ jobs:
       - run:
           name: Deploy build to build branch
           command: |
+            ls
             echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
             gh-pages --dist . \
               --branch build \
