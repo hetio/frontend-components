@@ -164,11 +164,6 @@ export class Table extends Component {
     this.state.dragField = null;
     this.state.dragValue = null;
     this.state.dragList = [];
-
-    // listen for key press anywhere to trigger keyboard shortcuts
-    window.addEventListener('keydown', this.onKeyDown);
-    // end checkbox drag when mouse released anywhere
-    window.addEventListener('mouseup', this.onMouseUp);
   }
 
   // when component mounts
@@ -184,6 +179,11 @@ export class Table extends Component {
     newState.data = newState.paginatedData;
 
     this.setState(newState);
+
+    // listen for key press anywhere to trigger keyboard shortcuts
+    window.addEventListener('keydown', this.onKeyDown);
+    // end checkbox drag when mouse released anywhere
+    window.addEventListener('mouseup', this.onMouseUp);
   }
 
   // when component updates
@@ -922,7 +922,10 @@ class BodyCheckboxCell extends Component {
     this.onMouseUp = this.onMouseUp.bind(this);
 
     this.ref = React.createRef();
+  }
 
+  // when component mounts
+  componentWillMount() {
     // end checkbox drag when mouse released anywhere
     window.addEventListener('mouseup', this.onMouseUp);
   }
