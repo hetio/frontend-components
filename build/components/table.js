@@ -641,11 +641,7 @@ function (_Component) {
     _this.state.perPage = _this.props.defaultPerPage || 10;
     _this.state.dragField = null;
     _this.state.dragValue = null;
-    _this.state.dragList = []; // listen for key press anywhere to trigger keyboard shortcuts
-
-    window.addEventListener('keydown', _this.onKeyDown); // end checkbox drag when mouse released anywhere
-
-    window.addEventListener('mouseup', _this.onMouseUp);
+    _this.state.dragList = [];
     return _this;
   } // when component mounts
 
@@ -661,7 +657,11 @@ function (_Component) {
       newState.paginatedData = this.paginateData(newState.filteredData);
       newState.pages = this.calcPages(newState.filteredData, this.state.perPage);
       newState.data = newState.paginatedData;
-      this.setState(newState);
+      this.setState(newState); // listen for key press anywhere to trigger keyboard shortcuts
+
+      window.addEventListener('keydown', this.onKeyDown); // end checkbox drag when mouse released anywhere
+
+      window.addEventListener('mouseup', this.onMouseUp);
     } // when component updates
 
   }, {
@@ -1121,14 +1121,19 @@ function (_Component10) {
     _this8.onMouseDown = _this8.onMouseDown.bind(_assertThisInitialized(_this8));
     _this8.onMouseMove = _this8.onMouseMove.bind(_assertThisInitialized(_this8));
     _this8.onMouseUp = _this8.onMouseUp.bind(_assertThisInitialized(_this8));
-    _this8.ref = _react.default.createRef(); // end checkbox drag when mouse released anywhere
-
-    window.addEventListener('mouseup', _this8.onMouseUp);
+    _this8.ref = _react.default.createRef();
     return _this8;
-  } // when component unmounts
+  } // when component mounts
 
 
   _createClass(BodyCheckboxCell, [{
+    key: "componentWillMount",
+    value: function componentWillMount() {
+      // end checkbox drag when mouse released anywhere
+      window.addEventListener('mouseup', this.onMouseUp);
+    } // when component unmounts
+
+  }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       window.removeEventListener('mouseup', this.onMouseUp);

@@ -17,7 +17,8 @@
     "color": "^3.1.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-scripts": "3.1.0"
+    "react-scripts": "3.1.0",
+    "eslint": "6.1.0"
   },
   "scripts": {
     "start": "cp ./src/index.development.js ./src/index.js && react-scripts start",
@@ -48,6 +49,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "peerDependencies": {
+    "eslint": "6.1.0"
   },
   "devDependencies": {
     "eslint": "6.1.0",
