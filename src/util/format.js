@@ -110,10 +110,5 @@ function isNumber(value) {
 
 // determine if value is defined
 function isDefined(value) {
-  return !(
-    value === '' ||
-    value === undefined ||
-    typeof value === 'object' ||
-    (typeof value === 'number' && String(value) === 'NaN')
-  );
+  return !(value === '' || value === undefined || typeof value === 'object');
 }
