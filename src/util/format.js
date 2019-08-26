@@ -108,6 +108,7 @@ function isNumber(value) {
   return false;
 }
 
+// determine if value is defined
 function isDefined(value) {
   return !(
     value === '' ||
