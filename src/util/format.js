@@ -8,7 +8,7 @@ export function toExponential(value) {
   if (!isNumber(value))
     return value;
 
-  number = parseFloat(value).toExponential(1);
+  const number = parseFloat(value).toExponential(1);
   const mantissa = parseFloat(number.split('e')[0]).toFixed(1);
   const exponent = parseInt(number.split('e')[1]);
 
@@ -47,7 +47,7 @@ export function toGradient(value, gradient) {
   if (!isNumber(value) || !Array.isArray(gradient) || !gradient.length)
     return 'rgba(255, 255, 255, 0)';
 
-  number = Number(value);
+  const number = Number(value);
 
   // sort gradient by number
   gradient.sort((a, b) => a[0] - b[0]);

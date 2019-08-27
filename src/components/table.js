@@ -925,7 +925,7 @@ class BodyCheckboxCell extends Component {
   }
 
   // when component mounts
-  componentWillMount() {
+  componentDidMount() {
     // end checkbox drag when mouse released anywhere
     window.addEventListener('mouseup', this.onMouseUp);
   }
