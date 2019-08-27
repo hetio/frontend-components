@@ -14,37 +14,39 @@ var _color = _interopRequireDefault(require("color"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 // get html of number in exponential form
-function toExponential(number) {
-  number = Number(number);
-  if (Number.isNaN(number)) return '-';
-  number = parseFloat(number).toExponential(1);
+function toExponential(value) {
+  if (!isDefined(value)) return '-';
+  if (!isNumber(value)) return value;
+  var number = parseFloat(value).toExponential(1);
   var mantissa = parseFloat(number.split('e')[0]).toFixed(1);
   var exponent = parseInt(number.split('e')[1]);
-  if (isNaN(mantissa) || isNaN(exponent)) return '-';
+  if (Number.isNaN(mantissa) || Number.isNaN(exponent)) return '-';
   return _react.default.createElement("span", null, mantissa, " \xD7 10", _react.default.createElement("sup", null, exponent));
 } // get html of number in regular form, rounded to 1 decimal digit
 
 
-function toFixed(number, precision) {
-  number = Number(number);
-  if (Number.isNaN(number)) return '-';
-  return parseFloat(number).toFixed(precision || 1);
+function toFixed(value, precision) {
+  if (!isDefined(value)) return '-';
+  if (!isNumber(value)) return value;
+  return parseFloat(value).toFixed(precision || 1);
 } // split many-digit number by comma (or other, depending on locale)
 
 
-function toComma(number) {
-  number = Number(number);
-  if (Number.isNaN(number)) return '-';
-  return Number(number).toLocaleString();
+function toComma(value) {
+  if (!isDefined(value)) return '-';
+  if (!isNumber(value)) return value;
+  return Number(value).toLocaleString();
 } // map number to css color based on specified gradient
 // gradient should be in format [ ... , [number, 'rgba()'], ... ]
 // values between gradient steps are linearly interpolated
 
 
-function toGradient(number, gradient) {
-  number = Number(number);
-  if (Number.isNaN(number) || !Array.isArray(gradient) || !gradient.length) return 'rgba(255, 255, 255, 0)'; // sort gradient by number
+function toGradient(value, gradient) {
+  if (!isNumber(value) || !Array.isArray(gradient) || !gradient.length) return 'rgba(255, 255, 255, 0)';
+  var number = Number(value); // sort gradient by number
 
   gradient.sort(function (a, b) {
     return a[0] - b[0];
@@ -74,4 +76,28 @@ function toGradient(number, gradient) {
   var color = lowerColor.mix(upperColor, percent); // return color
 
   return color || 'rgba(255, 255, 255, 0)';
+} // determine if value is a number
+
+
+function isNumber(value) {
+  // if number type
+  if (typeof value === 'number') {
+    // if NaN primitive, no
+    if (Number.isNaN(value)) return false; // else, if regular number primitive, yes
+    else return true;
+  } // if not string type (undefined, null, object), no
+
+
+  if (typeof value !== 'string') return false; // if string type, but empty string, no
+
+  if (value === '') return false; // if string type and can be parsed as string, yes
+
+  if (!Number.isNaN(Number(value))) return true; // otherwise, no
+
+  return false;
+} // determine if value is defined
+
+
+function isDefined(value) {
+  return !(value === '' || value === undefined || _typeof(value) === 'object' || typeof value === 'number' && String(value) === 'NaN');
 }

@@ -110,10 +110,12 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
+      var Button = this.props.href ? 'a' : 'button';
       return _react.default.createElement(_tooltip.Tooltip, {
         text: this.props.tooltipText
-      }, _react.default.createElement("button", {
-        className: this.props.className || '',
+      }, _react.default.createElement(Button, {
+        className: 'button ' + this.props.className || '',
+        href: this.props.href,
         onClick: this.onClick,
         onMouseDown: this.onMouseDown,
         onMouseMove: this.onMouseMove,
@@ -163,6 +165,7 @@ function (_Component2) {
       return _react.default.createElement(Button, {
         className: (this.props.className || '') + ' blue small',
         tooltipText: this.props.tooltipText,
+        href: this.props.href,
         onClick: this.props.onClick,
         onCtrlClick: this.props.onCtrlClick
       }, this.props.text && _react.default.createElement("span", null, this.props.text), _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {

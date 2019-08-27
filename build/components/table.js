@@ -1127,8 +1127,8 @@ function (_Component10) {
 
 
   _createClass(BodyCheckboxCell, [{
-    key: "componentWillMount",
-    value: function componentWillMount() {
+    key: "componentDidMount",
+    value: function componentDidMount() {
       // end checkbox drag when mouse released anywhere
       window.addEventListener('mouseup', this.onMouseUp);
     } // when component unmounts

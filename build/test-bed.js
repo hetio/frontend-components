@@ -90,7 +90,8 @@ function (_Component) {
       }, "Generic Button"), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement(_buttons.IconButton, {
         icon: _freeSolidSvgIcons.faStar,
         text: "Icon Button",
-        tooltipText: "Icon button tooltip text"
+        tooltipText: "Icon button tooltip text",
+        href: "https://www.greenelab.com"
       }), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement(_tooltip.Tooltip, {
         text: "Generic element tooltip"
       }, _react.default.createElement("span", null, "Generic element tooltip")), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement("span", {
