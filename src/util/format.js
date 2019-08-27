@@ -2,16 +2,17 @@ import React from 'react';
 import Color from 'color';
 
 // get html of number in exponential form
-export function toExponential(number) {
-  number = Number(number);
-  if (Number.isNaN(number))
+export function toExponential(value) {
+  if (!isDefined(value))
     return '-';
+  if (!isNumber(value))
+    return value;
 
-  number = parseFloat(number).toExponential(1);
+  const number = parseFloat(value).toExponential(1);
   const mantissa = parseFloat(number.split('e')[0]).toFixed(1);
   const exponent = parseInt(number.split('e')[1]);
 
-  if (isNaN(mantissa) || isNaN(exponent))
+  if (Number.isNaN(mantissa) || Number.isNaN(exponent))
     return '-';
 
   return (
@@ -22,28 +23,31 @@ export function toExponential(number) {
 }
 
 // get html of number in regular form, rounded to 1 decimal digit
-export function toFixed(number, precision) {
-  number = Number(number);
-  if (Number.isNaN(number))
+export function toFixed(value, precision) {
+  if (!isDefined(value))
     return '-';
-  return parseFloat(number).toFixed(precision || 1);
+  if (!isNumber(value))
+    return value;
+  return parseFloat(value).toFixed(precision || 1);
 }
 
 // split many-digit number by comma (or other, depending on locale)
-export function toComma(number) {
-  number = Number(number);
-  if (Number.isNaN(number))
+export function toComma(value) {
+  if (!isDefined(value))
     return '-';
-  return Number(number).toLocaleString();
+  if (!isNumber(value))
+    return value;
+  return Number(value).toLocaleString();
 }
 
 // map number to css color based on specified gradient
 // gradient should be in format [ ... , [number, 'rgba()'], ... ]
 // values between gradient steps are linearly interpolated
-export function toGradient(number, gradient) {
-  number = Number(number);
-  if (Number.isNaN(number) || !Array.isArray(gradient) || !gradient.length)
+export function toGradient(value, gradient) {
+  if (!isNumber(value) || !Array.isArray(gradient) || !gradient.length)
     return 'rgba(255, 255, 255, 0)';
+
+  const number = Number(value);
 
   // sort gradient by number
   gradient.sort((a, b) => a[0] - b[0]);
@@ -77,4 +81,39 @@ export function toGradient(number, gradient) {
 
   // return color
   return color || 'rgba(255, 255, 255, 0)';
+}
+
+// determine if value is a number
+function isNumber(value) {
+  // if number type
+  if (typeof value === 'number') {
+    // if NaN primitive, no
+    if (Number.isNaN(value))
+      return false;
+    // else, if regular number primitive, yes
+    else
+      return true;
+  }
+  // if not string type (undefined, null, object), no
+  if (typeof value !== 'string')
+    return false;
+  // if string type, but empty string, no
+  if (value === '')
+    return false;
+  // if string type and can be parsed as string, yes
+  if (!Number.isNaN(Number(value)))
+    return true;
+
+  // otherwise, no
+  return false;
+}
+
+// determine if value is defined
+function isDefined(value) {
+  return !(
+    value === '' ||
+    value === undefined ||
+    typeof value === 'object' ||
+    (typeof value === 'number' && String(value) === 'NaN')
+  );
 }

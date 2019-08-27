@@ -88,10 +88,12 @@ export class Button extends Component {
 
   // display component
   render() {
+    const Button = this.props.href ? 'a' : 'button';
     return (
       <Tooltip text={this.props.tooltipText}>
-        <button
-          className={this.props.className || ''}
+        <Button
+          className={'button ' + this.props.className || ''}
+          href={this.props.href}
           onClick={this.onClick}
           onMouseDown={this.onMouseDown}
           onMouseMove={this.onMouseMove}
@@ -99,7 +101,7 @@ export class Button extends Component {
           data-disabled={this.props.disabled}
         >
           {this.props.children}
-        </button>
+        </Button>
       </Tooltip>
     );
   }
@@ -135,6 +137,7 @@ export class IconButton extends Component {
       <Button
         className={(this.props.className || '') + ' blue small'}
         tooltipText={this.props.tooltipText}
+        href={this.props.href}
         onClick={this.props.onClick}
         onCtrlClick={this.props.onCtrlClick}
       >

@@ -63,6 +63,7 @@ export class TestBed extends Component {
           icon={faStar}
           text='Icon Button'
           tooltipText='Icon button tooltip text'
+          href="https://www.greenelab.com"
         />
         <br />
         <br />
