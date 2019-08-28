@@ -44,6 +44,8 @@ import { Tooltip } from './tooltip.js';
 // COMPONENT
 // //////////////////////////////////////////////////
 
+const flashTime = 1000;
+
 // button component
 export class Button extends Component {
   // initialize component
@@ -131,22 +133,66 @@ export class Button extends Component {
 // link colored button with text and icon to right
 // icon gets the attribute data-checked to allow desired CSS styling
 export class IconButton extends Component {
+  // initialize component
+  constructor() {
+    super();
+
+    this.state = {};
+    this.state.flashing = false;
+
+    this.flash = this.flash.bind(this);
+    this.timer = null;
+  }
+
+  flash() {
+    this.setState({ flashing: true });
+    window.clearTimeout(this.timer);
+    this.timer = window.setTimeout(
+      () => this.setState({ flashing: false }),
+      flashTime
+    );
+  }
+
   // display component
   render() {
+    let text = '';
+    let icon = <></>;
+
+    if (!this.state.flashing) {
+      if (this.props.text)
+        text = this.props.text;
+      if (this.props.icon)
+        icon = this.props.icon;
+    } else {
+      if (this.props.flashText)
+        text = this.props.flashText;
+      if (this.props.flashIcon)
+        icon = this.props.flashIcon;
+    }
+
     return (
       <Button
         className={(this.props.className || '') + ' blue small'}
         tooltipText={this.props.tooltipText}
         href={this.props.href}
-        onClick={this.props.onClick}
-        onCtrlClick={this.props.onCtrlClick}
-        onShiftClick={this.props.onShiftClick}
+        onClick={() => {
+          if (this.props.onClick)
+            this.props.onClick();
+          this.flash();
+        }}
+        onCtrlClick={() => {
+          if (this.props.onCtrlClick)
+            this.props.onCtrlClick();
+          this.flash();
+        }}
+        onShiftClick={() => {
+          if (this.props.onShiftClick)
+            this.props.onShiftClick();
+          this.flash();
+        }}
       >
-        {this.props.text && <span>{this.props.text}</span>}
-        <FontAwesomeIcon
-          icon={this.props.icon}
-          data-checked={this.props.checked}
-        />
+        <span>{text}</span>
+        <FontAwesomeIcon icon={icon} data-checked={this.props.checked} />
       </Button>
     );
   }

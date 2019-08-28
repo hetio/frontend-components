@@ -6,6 +6,8 @@ import { IconButton } from './components/buttons.js';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip } from './components/tooltip.js';
 import { DynamicField } from './components/dynamic-field.js';
 import { Table } from './components/table.js';
@@ -48,10 +50,10 @@ export class TestBed extends Component {
     this.state.data[1].bigNumber = null;
     this.state.data[2].bigNumber = NaN;
     this.state.data[3].bigNumber = Infinity;
-    this.state.data[6].bigNumber = ' ';
-    this.state.data[6].bigNumber = '1';
-    this.state.data[7].bigNumber = 'undefined';
-    this.state.data[8].bigNumber = 'null';
+    this.state.data[4].bigNumber = ' ';
+    this.state.data[5].bigNumber = '1';
+    this.state.data[6].bigNumber = 'apple';
+    this.state.data[7].bigNumber = 'grape';
   }
 
   render() {
@@ -71,6 +73,15 @@ export class TestBed extends Component {
           icon={faStar}
           text='Icon Button'
           tooltipText='Icon button tooltip text'
+          flashText='Clicked'
+          flashIcon={faCheck}
+        />
+        <br />
+        <br />
+        <IconButton
+          icon={faExternalLinkAlt}
+          text='Link Button'
+          tooltipText='Link button tooltip text'
           href='https://www.greenelab.com'
         />
         <br />
