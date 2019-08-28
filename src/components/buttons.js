@@ -155,20 +155,13 @@ export class IconButton extends Component {
 
   // display component
   render() {
-    let text = '';
-    let icon = <></>;
+    let text = this.props.text;
+    let icon = this.props.icon;
 
-    if (!this.state.flashing) {
-      if (this.props.text)
-        text = this.props.text;
-      if (this.props.icon)
-        icon = this.props.icon;
-    } else {
-      if (this.props.flashText)
-        text = this.props.flashText;
-      if (this.props.flashIcon)
-        icon = this.props.flashIcon;
-    }
+    if (this.props.flashText && this.state.flashing)
+      text = this.props.flashText;
+    if (this.props.flashIcon && this.state.flashing)
+      icon = this.props.flashIcon;
 
     return (
       <Button
