@@ -72,10 +72,10 @@ function (_Component) {
     _this.state.data[1].bigNumber = null;
     _this.state.data[2].bigNumber = NaN;
     _this.state.data[3].bigNumber = Infinity;
-    _this.state.data[6].bigNumber = ' ';
-    _this.state.data[6].bigNumber = '1';
-    _this.state.data[7].bigNumber = 'undefined';
-    _this.state.data[8].bigNumber = 'null';
+    _this.state.data[4].bigNumber = ' ';
+    _this.state.data[5].bigNumber = '1';
+    _this.state.data[6].bigNumber = 'apple';
+    _this.state.data[7].bigNumber = 'grape';
     return _this;
   }
 
@@ -99,6 +99,12 @@ function (_Component) {
         icon: _freeSolidSvgIcons.faStar,
         text: "Icon Button",
         tooltipText: "Icon button tooltip text",
+        flashText: "Clicked",
+        flashIcon: _freeSolidSvgIcons.faCheck
+      }), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement(_buttons.IconButton, {
+        icon: _freeSolidSvgIcons.faExternalLinkAlt,
+        text: "Link Button",
+        tooltipText: "Link button tooltip text",
         href: "https://www.greenelab.com"
       }), _react.default.createElement("br", null), _react.default.createElement("br", null), _react.default.createElement(_tooltip.Tooltip, {
         text: "Generic element tooltip"

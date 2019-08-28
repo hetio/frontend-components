@@ -58,7 +58,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 // //////////////////////////////////////////////////
 // COMPONENT
 // //////////////////////////////////////////////////
-// button component
+var flashTime = 1000; // button component
+
 var Button =
 /*#__PURE__*/
 function (_Component) {
@@ -152,25 +153,66 @@ var IconButton =
 function (_Component2) {
   _inherits(IconButton, _Component2);
 
+  // initialize component
   function IconButton() {
+    var _this2;
+
     _classCallCheck(this, IconButton);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(IconButton).apply(this, arguments));
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(IconButton).call(this));
+    _this2.state = {};
+    _this2.state.flashing = false;
+    _this2.flash = _this2.flash.bind(_assertThisInitialized(_this2));
+    _this2.timer = null;
+    return _this2;
   }
 
   _createClass(IconButton, [{
+    key: "flash",
+    value: function flash() {
+      var _this3 = this;
+
+      this.setState({
+        flashing: true
+      });
+      window.clearTimeout(this.timer);
+      this.timer = window.setTimeout(function () {
+        return _this3.setState({
+          flashing: false
+        });
+      }, flashTime);
+    } // display component
+
+  }, {
     key: "render",
-    // display component
     value: function render() {
+      var _this4 = this;
+
+      var text = this.props.text;
+      var icon = this.props.icon;
+      if (this.props.flashText && this.state.flashing) text = this.props.flashText;
+      if (this.props.flashIcon && this.state.flashing) icon = this.props.flashIcon;
       return _react.default.createElement(Button, {
         className: (this.props.className || '') + ' blue small',
         tooltipText: this.props.tooltipText,
         href: this.props.href,
-        onClick: this.props.onClick,
-        onCtrlClick: this.props.onCtrlClick,
-        onShiftClick: this.props.onShiftClick
-      }, this.props.text && _react.default.createElement("span", null, this.props.text), _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
-        icon: this.props.icon,
+        onClick: function onClick() {
+          if (_this4.props.onClick) _this4.props.onClick();
+
+          _this4.flash();
+        },
+        onCtrlClick: function onCtrlClick() {
+          if (_this4.props.onCtrlClick) _this4.props.onCtrlClick();
+
+          _this4.flash();
+        },
+        onShiftClick: function onShiftClick() {
+          if (_this4.props.onShiftClick) _this4.props.onShiftClick();
+
+          _this4.flash();
+        }
+      }, _react.default.createElement("span", null, text), _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
+        icon: icon,
         "data-checked": this.props.checked
       }));
     }
