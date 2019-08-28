@@ -121,7 +121,7 @@ function (_Component) {
         onMouseMove: this.onMouseMove,
         onMouseUp: this.onMouseUp,
         "data-disabled": this.props.disabled
-      }, _react.default.createElement("span", null, this.props.children)));
+      }, this.props.children));
     }
   }]);
 
