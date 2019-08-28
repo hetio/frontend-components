@@ -13,6 +13,7 @@ import { faListOl } from '@fortawesome/free-solid-svg-icons';
 
 import { Button } from './buttons.js';
 import { Tooltip } from './tooltip.js';
+import { getType } from '../util/type.js';
 import { compareObjects } from '../util/object.js';
 import { copyObject } from '../util/object.js';
 
@@ -352,39 +353,43 @@ export class Table extends Component {
 
   // compare function for sorting
   defaultSort = (a, b, key, sortUp) => {
-    // if both are numbers, compare by values
-    if (
-      (typeof a[key] === 'number' || !Number.isNaN(Number(a[key]))) &&
-      (typeof b[key] === 'number' || !Number.isNaN(Number(b[key])))
-    ) {
-      if (Number(a[key]) < Number(b[key]))
+    a = a[key];
+    b = b[key];
+
+    // determine type of values
+    const aType = getType(a);
+    const bType = getType(b);
+
+    // always sort numbers above strings above undefined's
+    if (aType > bType)
+      return sortUp ? 1 : -1;
+    else if (aType < bType)
+      return sortUp ? -1 : 1;
+
+    // otherwise, both same type
+
+    // if both numbers, compare by values
+    if (aType === 2) {
+      if (Number(a) < Number(b))
         return -1;
-      else if (Number(a[key]) > Number(b[key]))
+      else if (Number(a) > Number(b))
         return 1;
       else
         return 0;
     }
 
-    // if one is undefined/object and the other is not, always put the
-    // undefined/object vertically below
-    if (
-      (typeof a[key] === 'undefined' || typeof a[key] === 'object') &&
-      !(typeof b[key] === 'undefined' || typeof b[key] === 'object')
-    )
-      return sortUp ? -1 : 1;
-    if (
-      !(typeof a[key] === 'undefined' || typeof a[key] === 'object') &&
-      (typeof b[key] === 'undefined' || typeof b[key] === 'object')
-    )
-      return sortUp ? 1 : -1;
+    // if both strings, compare alphabetically
+    if (aType === 1) {
+      if (a < b)
+        return -1;
+      else if (a > b)
+        return 1;
+      else
+        return 0;
+    }
 
-    // otherwise, compare alphabetically
-    if (a[key] < b[key])
-      return -1;
-    else if (a[key] > b[key])
-      return 1;
-    else
-      return 0;
+    // if both undefined or other, order doesn't matter
+    return 0;
   };
 
   // sort data in same order as it was before, based on index
