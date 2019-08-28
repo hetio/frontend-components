@@ -100,7 +100,7 @@ export class Button extends Component {
           onMouseUp={this.onMouseUp}
           data-disabled={this.props.disabled}
         >
-          <span>{this.props.children}</span>
+          {this.props.children}
         </Button>
       </Tooltip>
     );
