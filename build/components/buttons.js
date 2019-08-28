@@ -83,10 +83,10 @@ function (_Component) {
     key: "onClick",
     value: function onClick(event) {
       if (event.ctrlKey) {
-        if (this.props.onCtrlClick) this.props.onCtrlClick();
+        if (this.props.onCtrlClick) this.props.onCtrlClick(event);
       } else if (event.shiftKey) {
-        if (this.props.onShiftClick) this.props.onShiftClick();
-      } else if (this.props.onClick) this.props.onClick();
+        if (this.props.onShiftClick) this.props.onShiftClick(event);
+      } else if (this.props.onClick) this.props.onClick(event);
     } // when user presses down on button
 
   }, {
@@ -121,7 +121,7 @@ function (_Component) {
         onMouseMove: this.onMouseMove,
         onMouseUp: this.onMouseUp,
         "data-disabled": this.props.disabled
-      }, this.props.children));
+      }, _react.default.createElement("span", null, this.props.children)));
     }
   }]);
 
@@ -167,7 +167,8 @@ function (_Component2) {
         tooltipText: this.props.tooltipText,
         href: this.props.href,
         onClick: this.props.onClick,
-        onCtrlClick: this.props.onCtrlClick
+        onCtrlClick: this.props.onCtrlClick,
+        onShiftClick: this.props.onShiftClick
       }, this.props.text && _react.default.createElement("span", null, this.props.text), _react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
         icon: this.props.icon,
         "data-checked": this.props.checked
