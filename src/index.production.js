@@ -14,6 +14,7 @@ import { toExponential } from './util/format.js';
 import { toFixed } from './util/format.js';
 import { toComma } from './util/format.js';
 import { toGradient } from './util/format.js';
+import { getType } from './util/type.js';
 import { transferObjectProps } from './util/object.js';
 import { copyObject } from './util/object.js';
 import { compareObjects } from './util/object.js';

@@ -1,11 +1,14 @@
 import React from 'react';
 import Color from 'color';
 
+import { getType } from './type.js';
+
 // get html of number in exponential form
 export function toExponential(value) {
-  if (!isDefined(value))
+  const type = getType(value);
+  if (type === 0)
     return '-';
-  if (!isNumber(value))
+  if (type === 1)
     return value;
 
   const number = parseFloat(value).toExponential(1);
@@ -24,18 +27,20 @@ export function toExponential(value) {
 
 // get html of number in regular form, rounded to 1 decimal digit
 export function toFixed(value, precision) {
-  if (!isDefined(value))
+  const type = getType(value);
+  if (type === 0)
     return '-';
-  if (!isNumber(value))
+  if (type === 1)
     return value;
   return parseFloat(value).toFixed(precision || 1);
 }
 
 // split many-digit number by comma (or other, depending on locale)
 export function toComma(value) {
-  if (!isDefined(value))
+  const type = getType(value);
+  if (type === 0)
     return '-';
-  if (!isNumber(value))
+  if (type === 1)
     return value;
   return Number(value).toLocaleString();
 }
@@ -44,7 +49,7 @@ export function toComma(value) {
 // gradient should be in format [ ... , [number, 'rgba()'], ... ]
 // values between gradient steps are linearly interpolated
 export function toGradient(value, gradient) {
-  if (!isNumber(value) || !Array.isArray(gradient) || !gradient.length)
+  if (getType(value) !== 2 || !Array.isArray(gradient) || !gradient.length)
     return 'rgba(255, 255, 255, 0)';
 
   const number = Number(value);
@@ -81,39 +86,4 @@ export function toGradient(value, gradient) {
 
   // return color
   return color || 'rgba(255, 255, 255, 0)';
-}
-
-// determine if value is a number
-function isNumber(value) {
-  // if number type
-  if (typeof value === 'number') {
-    // if NaN primitive, no
-    if (Number.isNaN(value))
-      return false;
-    // else, if regular number primitive, yes
-    else
-      return true;
-  }
-  // if not string type (undefined, null, object), no
-  if (typeof value !== 'string')
-    return false;
-  // if string type, but empty string, no
-  if (value === '')
-    return false;
-  // if string type and can be parsed as string, yes
-  if (!Number.isNaN(Number(value)))
-    return true;
-
-  // otherwise, no
-  return false;
-}
-
-// determine if value is defined
-function isDefined(value) {
-  return !(
-    value === '' ||
-    value === undefined ||
-    typeof value === 'object' ||
-    (typeof value === 'number' && String(value) === 'NaN')
-  );
 }

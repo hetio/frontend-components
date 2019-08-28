@@ -44,6 +44,14 @@ export class TestBed extends Component {
           (Math.random() > 0.5 ? 'Cat' : 'Dog')
       });
     }
+    this.state.data[0].bigNumber = undefined;
+    this.state.data[1].bigNumber = null;
+    this.state.data[2].bigNumber = NaN;
+    this.state.data[3].bigNumber = Infinity;
+    this.state.data[6].bigNumber = ' ';
+    this.state.data[6].bigNumber = '1';
+    this.state.data[7].bigNumber = 'undefined';
+    this.state.data[8].bigNumber = 'null';
   }
 
   render() {
@@ -63,7 +71,7 @@ export class TestBed extends Component {
           icon={faStar}
           text='Icon Button'
           tooltipText='Icon button tooltip text'
-          href="https://www.greenelab.com"
+          href='https://www.greenelab.com'
         />
         <br />
         <br />
@@ -83,7 +91,7 @@ export class TestBed extends Component {
         <br />
         <i>{this.state.data.filter((datum) => datum.checked).length} starred</i>
         <Table
-          containerClass="table_container"
+          containerClass='table_container'
           data={this.state.data}
           fields={['checked', 'text', 'smallNumber', 'bigNumber', 'fruit']}
           checkboxes={[true]}
