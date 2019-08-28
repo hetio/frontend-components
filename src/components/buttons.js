@@ -60,12 +60,12 @@ export class Button extends Component {
   onClick(event) {
     if (event.ctrlKey) {
       if (this.props.onCtrlClick)
-        this.props.onCtrlClick();
+        this.props.onCtrlClick(event);
     } else if (event.shiftKey) {
       if (this.props.onShiftClick)
-        this.props.onShiftClick();
+        this.props.onShiftClick(event);
     } else if (this.props.onClick)
-      this.props.onClick();
+      this.props.onClick(event);
   }
 
   // when user presses down on button
@@ -100,7 +100,7 @@ export class Button extends Component {
           onMouseUp={this.onMouseUp}
           data-disabled={this.props.disabled}
         >
-          {this.props.children}
+          <span>{this.props.children}</span>
         </Button>
       </Tooltip>
     );
@@ -140,6 +140,7 @@ export class IconButton extends Component {
         href={this.props.href}
         onClick={this.props.onClick}
         onCtrlClick={this.props.onCtrlClick}
+        onShiftClick={this.props.onShiftClick}
       >
         {this.props.text && <span>{this.props.text}</span>}
         <FontAwesomeIcon
