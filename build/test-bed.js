@@ -68,6 +68,14 @@ function (_Component) {
       });
     }
 
+    _this.state.data[0].bigNumber = undefined;
+    _this.state.data[1].bigNumber = null;
+    _this.state.data[2].bigNumber = NaN;
+    _this.state.data[3].bigNumber = Infinity;
+    _this.state.data[6].bigNumber = ' ';
+    _this.state.data[6].bigNumber = '1';
+    _this.state.data[7].bigNumber = 'undefined';
+    _this.state.data[8].bigNumber = 'null';
     return _this;
   }
 

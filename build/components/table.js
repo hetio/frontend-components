@@ -15,11 +15,15 @@ var _buttons = require("./buttons.js");
 
 var _tooltip = require("./tooltip.js");
 
+var _type = require("../util/type.js");
+
 var _object = require("../util/object.js");
 
 require("./table.css");
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
@@ -28,8 +32,6 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -239,17 +241,26 @@ function (_Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "defaultSort", function (a, b, key, sortUp) {
-      // if both are numbers, compare by values
-      if ((typeof a[key] === 'number' || !Number.isNaN(Number(a[key]))) && (typeof b[key] === 'number' || !Number.isNaN(Number(b[key])))) {
-        if (Number(a[key]) < Number(b[key])) return -1;else if (Number(a[key]) > Number(b[key])) return 1;else return 0;
-      } // if one is undefined/object and the other is not, always put the
-      // undefined/object vertically below
+      a = a[key];
+      b = b[key]; // determine type of values
+
+      var aType = (0, _type.getType)(a);
+      var bType = (0, _type.getType)(b); // always sort numbers above strings above undefined's
+
+      if (aType > bType) return sortUp ? 1 : -1;else if (aType < bType) return sortUp ? -1 : 1; // otherwise, both same type
+      // if both numbers, compare by values
+
+      if (aType === 2) {
+        if (Number(a) < Number(b)) return -1;else if (Number(a) > Number(b)) return 1;else return 0;
+      } // if both strings, compare alphabetically
 
 
-      if ((typeof a[key] === 'undefined' || _typeof(a[key]) === 'object') && !(typeof b[key] === 'undefined' || _typeof(b[key]) === 'object')) return sortUp ? -1 : 1;
-      if (!(typeof a[key] === 'undefined' || _typeof(a[key]) === 'object') && (typeof b[key] === 'undefined' || _typeof(b[key]) === 'object')) return sortUp ? 1 : -1; // otherwise, compare alphabetically
+      if (aType === 1) {
+        if (a < b) return -1;else if (a > b) return 1;else return 0;
+      } // if both undefined or other, order doesn't matter
 
-      if (a[key] < b[key]) return -1;else if (a[key] > b[key]) return 1;else return 0;
+
+      return 0;
     });
 
     _defineProperty(_assertThisInitialized(_this), "preserveSortData", function (oldData, newData) {

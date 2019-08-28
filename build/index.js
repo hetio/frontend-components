@@ -154,6 +154,8 @@ var _file = require("./util/file.js");
 
 var _format = require("./util/format.js");
 
+var _type = require("./util/type.js");
+
 var _object = require("./util/object.js");
 
 var _string = require("./util/string.js");
