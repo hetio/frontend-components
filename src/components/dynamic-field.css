@@ -19,5 +19,5 @@
 }
 th > .dynamic_field,
 td > .dynamic_field {
-  height: 25px;
+  min-height: 25px;
 }

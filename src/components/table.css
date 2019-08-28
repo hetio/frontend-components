@@ -5,6 +5,7 @@
   padding: 0;
 }
 th > .table_button {
+  height: 35px;
   padding: 0 5px;
 }
 .table_sort_icon {
