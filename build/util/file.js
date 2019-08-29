@@ -27,9 +27,7 @@ function downloadCsv(data, filename) {
 
 
 function downloadSvg(data, filename) {
-  var fileContent = new XMLSerializer().serializeToString(data);
-  fileContent = fileContent.split('&amp;').join('&');
-  var blob = new Blob([fileContent], {
+  var blob = new Blob([data], {
     type: 'image/svg+xml'
   });
   var url = window.URL.createObjectURL(blob);
