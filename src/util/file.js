@@ -17,9 +17,7 @@ export function downloadCsv(data, filename) {
 
 // downloads provided data as svg file
 export function downloadSvg(data, filename) {
-  let fileContent = new XMLSerializer().serializeToString(data);
-  fileContent = fileContent.split('&amp;').join('&');
-  const blob = new Blob([fileContent], { type: 'image/svg+xml' });
+  const blob = new Blob([data], { type: 'image/svg+xml' });
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
   document.body.appendChild(link);
