@@ -11,14 +11,13 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.21",
-    "@fortawesome/free-solid-svg-icons": "^5.10.1",
+    "@fortawesome/fontawesome-svg-core": "^1.2.24",
+    "@fortawesome/free-solid-svg-icons": "^5.11.1",
     "@fortawesome/react-fontawesome": "^0.1.4",
     "color": "^3.1.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-scripts": "3.1.0",
-    "eslint": "6.1.0"
+    "react-scripts": "^3.1.2"
   },
   "scripts": {
     "start": "cp ./src/index.development.js ./src/index.js && react-scripts start",
@@ -50,17 +49,13 @@
       "last 1 safari version"
     ]
   },
-  "peerDependencies": {
-    "eslint": "6.1.0"
-  },
   "devDependencies": {
-    "eslint": "6.1.0",
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
+    "@babel/preset-env": "^7.6.0",
     "@babel/preset-react": "^7.0.0",
-    "eslint-config-google": "^0.13.0",
+    "eslint-config-google": "^0.14.0",
     "eslint-plugin-html": "^6.0.0",
     "eslint-plugin-react": "^7.14.3"
   }
