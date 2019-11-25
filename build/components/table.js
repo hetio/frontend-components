@@ -1130,6 +1130,7 @@ function (_Component10) {
     _this8.state = {}; // temporary checked state for dragging
 
     _this8.state.tempChecked = null;
+    _this8.onKeyDown = _this8.onKeyDown.bind(_assertThisInitialized(_this8));
     _this8.onCtrlClick = _this8.onCtrlClick.bind(_assertThisInitialized(_this8));
     _this8.onMouseDown = _this8.onMouseDown.bind(_assertThisInitialized(_this8));
     _this8.onMouseMove = _this8.onMouseMove.bind(_assertThisInitialized(_this8));
@@ -1150,6 +1151,12 @@ function (_Component10) {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       window.removeEventListener('mouseup', this.onMouseUp);
+    } // on key down
+
+  }, {
+    key: "onKeyDown",
+    value: function onKeyDown() {
+      this.context.toggleChecked(this.props.datum[rowIndexKey], this.props.field);
     } // on ctrl+click
 
   }, {
@@ -1203,6 +1210,7 @@ function (_Component10) {
         ref: this.ref
       }, _react.default.createElement(_buttons.Button, {
         className: 'table_button',
+        onKeyDown: this.onKeyDown,
         onCtrlClick: this.onCtrlClick,
         onMouseDown: this.onMouseDown,
         onMouseMove: this.onMouseMove

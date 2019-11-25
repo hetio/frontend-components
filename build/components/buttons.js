@@ -78,6 +78,7 @@ function (_Component) {
     _this.onMouseDown = _this.onMouseDown.bind(_assertThisInitialized(_this));
     _this.onMouseMove = _this.onMouseMove.bind(_assertThisInitialized(_this));
     _this.onMouseUp = _this.onMouseUp.bind(_assertThisInitialized(_this));
+    _this.onKeyDown = _this.onKeyDown.bind(_assertThisInitialized(_this));
     return _this;
   } // when user clicks button
 
@@ -108,6 +109,12 @@ function (_Component) {
     key: "onMouseUp",
     value: function onMouseUp(event) {
       if (event.button === 0 && this.props.onMouseUp) this.props.onMouseUp(event);
+    } // when user presses key with button focused
+
+  }, {
+    key: "onKeyDown",
+    value: function onKeyDown(event) {
+      if (this.props.onKeyDown) this.props.onKeyDown(event);
     } // display component
 
   }, {
@@ -123,6 +130,7 @@ function (_Component) {
         onMouseDown: this.onMouseDown,
         onMouseMove: this.onMouseMove,
         onMouseUp: this.onMouseUp,
+        onKeyDown: this.onKeyDown,
         "data-disabled": this.props.disabled
       }, this.props.children));
     }
