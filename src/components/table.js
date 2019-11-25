@@ -941,7 +941,7 @@ class BodyCheckboxCell extends Component {
     window.removeEventListener('mouseup', this.onMouseUp);
   }
 
-  // on click
+  // on key down
   onKeyDown() {
     this.context.toggleChecked(this.props.datum[rowIndexKey], this.props.field);
   }
