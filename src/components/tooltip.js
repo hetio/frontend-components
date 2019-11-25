@@ -5,7 +5,7 @@ import { Component } from 'react';
 import './tooltip.css';
 
 // open delay in ms
-const delay = 500;
+const delay = 250;
 
 // //////////////////////////////////////////////////
 // INPUT PROPS
