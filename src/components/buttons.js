@@ -91,7 +91,11 @@ export class Button extends Component {
 
   // when user presses key with button focused
   onKeyDown(event) {
-    if (this.props.onKeyDown)
+    if (
+      (event.key.toLowerCase() === 'enter' ||
+        event.key.toLowerCase() === ' ') &&
+      this.props.onKeyDown
+    )
       this.props.onKeyDown(event);
   }
 
