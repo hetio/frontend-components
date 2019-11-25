@@ -56,6 +56,7 @@ export class Button extends Component {
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
   }
 
   // when user clicks button
@@ -88,6 +89,12 @@ export class Button extends Component {
       this.props.onMouseUp(event);
   }
 
+  // when user presses key with button focused
+  onKeyDown(event) {
+    if (this.props.onKeyDown)
+      this.props.onKeyDown(event);
+  }
+
   // display component
   render() {
     const Button = this.props.href ? 'a' : 'button';
@@ -100,6 +107,7 @@ export class Button extends Component {
           onMouseDown={this.onMouseDown}
           onMouseMove={this.onMouseMove}
           onMouseUp={this.onMouseUp}
+          onKeyDown={this.onKeyDown}
           data-disabled={this.props.disabled}
         >
           {this.props.children}

@@ -421,9 +421,9 @@ export class Table extends Component {
       return data;
 
     return data.filter((datum) => {
-      const searchFields = this.props.searchAllFields
-        ? this.props.fields.concat(Object.keys(datum))
-        : this.props.fields;
+      const searchFields = this.props.searchAllFields ?
+        this.props.fields.concat(Object.keys(datum)) :
+        this.props.fields;
       for (const field of searchFields) {
         if (
           String(JSON.stringify(datum[field]))
@@ -921,6 +921,7 @@ class BodyCheckboxCell extends Component {
     // temporary checked state for dragging
     this.state.tempChecked = null;
 
+    this.onKeyDown = this.onKeyDown.bind(this);
     this.onCtrlClick = this.onCtrlClick.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -938,6 +939,11 @@ class BodyCheckboxCell extends Component {
   // when component unmounts
   componentWillUnmount() {
     window.removeEventListener('mouseup', this.onMouseUp);
+  }
+
+  // on key down
+  onKeyDown() {
+    this.context.toggleChecked(this.props.datum[rowIndexKey], this.props.field);
   }
 
   // on ctrl+click
@@ -988,6 +994,7 @@ class BodyCheckboxCell extends Component {
         >
           <Button
             className={'table_button'}
+            onKeyDown={this.onKeyDown}
             onCtrlClick={this.onCtrlClick}
             onMouseDown={this.onMouseDown}
             onMouseMove={this.onMouseMove}
@@ -1014,9 +1021,9 @@ class BodyCell extends Component {
           style={this.props.style || {}}
           className={this.props.className || ''}
           data-highlighted={
-            this.props.datum[cellHighlightKey] === this.props.field
-              ? true
-              : false
+            this.props.datum[cellHighlightKey] === this.props.field ?
+              true :
+              false
           }
         >
           {this.props.content || ''}
