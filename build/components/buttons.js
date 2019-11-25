@@ -114,7 +114,7 @@ function (_Component) {
   }, {
     key: "onKeyDown",
     value: function onKeyDown(event) {
-      if (this.props.onKeyDown) this.props.onKeyDown(event);
+      if ((event.key.toLowerCase() === 'enter' || event.key.toLowerCase() === ' ') && this.props.onKeyDown) this.props.onKeyDown(event);
     } // display component
 
   }, {
