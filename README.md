@@ -1,4 +1,6 @@
 [![CircleCI](https://circleci.com/gh/hetio/frontend-components.svg?style=svg)](https://circleci.com/gh/hetio/frontend-components)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/hetio/frontend-components/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/hetio/frontend-components)
+
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
